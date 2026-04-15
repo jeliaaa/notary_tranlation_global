@@ -7,6 +7,7 @@ import { Menu, X, Phone, ChevronDown } from 'lucide-react';
 import type { Lang } from '@/lib/translations';
 import { getT } from '@/lib/translations';
 import { CONTACT } from '@/lib/data';
+import { useCurrency, type Currency } from '@/lib/currency-context';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
@@ -27,6 +28,7 @@ export default function Header({ lang }: Props) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { currency, setCurrency } = useCurrency();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -134,6 +136,23 @@ export default function Header({ lang }: Props) {
               <Phone className="w-4 h-4" />
               {CONTACT.phone1.short}
             </button>
+
+            {/* Currency toggle */}
+            <div className="flex bg-gray-100 rounded-lg p-0.5">
+              {(['PLN', 'EUR'] as Currency[]).map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setCurrency(c)}
+                  className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors ${
+                    currency === c
+                      ? 'bg-primary-600 text-white shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  {c === 'PLN' ? 'PLN' : 'EUR'}
+                </button>
+              ))}
+            </div>
 
             {/* Language selector */}
             <div className="relative">

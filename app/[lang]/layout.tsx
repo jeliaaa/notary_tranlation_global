@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { Lang } from '@/lib/translations';
+import { CurrencyProvider } from '@/lib/currency-context';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import TawkToWidget from '@/components/TawkToWidget';
@@ -22,11 +23,13 @@ export default async function LangLayout({ children, params }: Props) {
   return (
     <html lang={lang} className="scroll-smooth">
       <body className="flex flex-col min-h-screen overflow-x-hidden bg-white">
-        <ScrollToTop />
-        <Header lang={lang} />
-        <main className="flex-grow">{children}</main>
-        <Footer lang={lang} />
-        <TawkToWidget />
+        <CurrencyProvider>
+          <ScrollToTop />
+          <Header lang={lang} />
+          <main className="flex-grow">{children}</main>
+          <Footer lang={lang} />
+          <TawkToWidget />
+        </CurrencyProvider>
       </body>
     </html>
   );

@@ -99,7 +99,7 @@ export default function Prices({ lang }: Props) {
         </AnimatedSection>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <AnimatedSection direction="left" delay={0.15}>
+          {/* <AnimatedSection direction="left" delay={0.15}>
             <div className="bg-white rounded-2xl shadow-lg p-6 h-full">
               <div className="flex items-center gap-2 mb-4">
                 <Info className="w-5 h-5 text-primary-500" />
@@ -114,7 +114,7 @@ export default function Prices({ lang }: Props) {
                 ))}
               </ul>
             </div>
-          </AnimatedSection>
+          </AnimatedSection> */}
 
           <AnimatedSection direction="right" delay={0.15}>
             <div className="bg-white rounded-2xl shadow-lg p-6 h-full">

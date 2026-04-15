@@ -12,7 +12,7 @@ interface Props {
 const content = {
   en: {
     heading: 'Professional Translation House Services',
-    subtitle: 'Fast, accurate, and certified translations for all your official documents. Trusted by thousands of clients in Tbilisi.',
+    subtitle: 'Fast, accurate, and certified translations for all your official documents. Trusted by thousands of clients in Warsaw.',
     uploadBtn: 'Upload Document Now',
     calcBtn: 'Calculate Price',
     badges: [
@@ -23,7 +23,7 @@ const content = {
   },
   pl: {
     heading: 'Profesjonalne Usługi Tłumaczenia Notarialnego',
-    subtitle: 'Szybkie, dokładne i certyfikowane tłumaczenia wszystkich oficjalnych dokumentów. Zaufało nam tysiące klientów w Tbilisi.',
+    subtitle: 'Szybkie, dokładne i certyfikowane tłumaczenia wszystkich oficjalnych dokumentów. Zaufało nam tysiące klientów w Warszawie.',
     uploadBtn: 'Prześlij dokument teraz',
     calcBtn: 'Oblicz cenę',
     badges: [

@@ -40,4 +40,5 @@ export const pl = {
   allRightsReserved: 'Wszelkie prawa zastrzeżone',
   privacy: 'Polityka prywatności',
   terms: 'Regulamin',
+  contactViaWhatsApp: 'Skontaktuj się przez WhatsApp',
 };

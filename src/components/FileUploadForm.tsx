@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { Upload, FileText, X, Check, Phone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { Lang } from '@/lib/translations';
+import { getT, type Lang } from '@/lib/translations';
 import { CONTACT } from '@/lib/data';
 
 declare const emailjs: {
@@ -59,6 +59,7 @@ export default function FileUploadForm({ lang }: Props) {
   const [loading, setLoading] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const t = getT(lang);
 
   const addToast = (type: 'success' | 'error', message: string) => {
     const id = ++toastCounter;
@@ -79,6 +80,17 @@ export default function FileUploadForm({ lang }: Props) {
     e.preventDefault();
     setDragging(false);
     addFiles(e.dataTransfer.files);
+  };
+
+  const getWhatsAppLink = () => {
+    const phone = CONTACT.phone1.short.replace(/\D/g, '');
+    const message = encodeURIComponent('Hello, I would like to get more information.');
+    return `https://wa.me/${phone}?text=${message}`;
+  };
+
+  const handleContactUsClick = () => {
+    const link = getWhatsAppLink();
+    window.open(link, '_blank');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -153,9 +165,8 @@ export default function FileUploadForm({ lang }: Props) {
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
           onClick={() => inputRef.current?.click()}
-          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
-            dragging ? 'border-primary-500 bg-primary-50' : 'border-gray-300 hover:border-primary-400 bg-white'
-          }`}
+          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${dragging ? 'border-primary-500 bg-primary-50' : 'border-gray-300 hover:border-primary-400 bg-white'
+            }`}
         >
           <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
           <p className="text-sm text-gray-600">
@@ -200,11 +211,10 @@ export default function FileUploadForm({ lang }: Props) {
         <button
           type="submit"
           disabled={!files.length || loading}
-          className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-sm transition-all ${
-            files.length && !loading
+          className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-sm transition-all ${files.length && !loading
               ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:opacity-90'
               : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          }`}
+            }`}
         >
           {loading ? (
             <>
@@ -218,8 +228,8 @@ export default function FileUploadForm({ lang }: Props) {
 
         <p className="text-center text-sm text-gray-500">
           {c.orCall}{' '}
-          <a href={`tel:${CONTACT.phone1.tel}`} className="text-primary-600 font-medium">
-            {CONTACT.phone1.display}
+          <a onClick={handleContactUsClick} className="text-primary-600 font-medium">
+            {t.contactViaWhatsApp}
           </a>
         </p>
       </form>
@@ -232,9 +242,8 @@ export default function FileUploadForm({ lang }: Props) {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 20, opacity: 0 }}
-              className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-white text-sm font-medium ${
-                toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-              }`}
+              className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-white text-sm font-medium ${toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+                }`}
             >
               {toast.type === 'success' ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
               {toast.message}

@@ -26,8 +26,8 @@ export default function PriceCalculator({ lang }: Props) {
   const t = getT(lang);
   const names = languageNames[lang];
 
-  const [from, setFrom] = useState('english');
-  const [to, setTo] = useState('georgian');
+  const [from, setFrom] = useState('polish');
+  const [to, setTo] = useState('english');
   const [pages, setPages] = useState(1);
   const [notary, setNotary] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
@@ -106,7 +106,7 @@ export default function PriceCalculator({ lang }: Props) {
         </div>
 
         {/* Notary */}
-        <div
+        {/* <div
           onClick={() => setNotary((v) => !v)}
           className="flex items-center gap-3 cursor-pointer border-2 border-gray-200 hover:border-primary-300 rounded-xl px-4 py-3 transition-colors select-none"
         >
@@ -118,7 +118,7 @@ export default function PriceCalculator({ lang }: Props) {
             )}
           </div>
           <span className="text-sm font-medium text-gray-700">{t.notaryApproval}</span>
-        </div>
+        </div> */}
 
         <button
           type="submit"

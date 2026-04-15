@@ -1,40 +1,40 @@
 import type { Lang } from './translations';
 
 export const languages = [
-  'georgian', 'english', 'russian', 'german', 'french', 'spanish',
+  'polish', 'english', 'russian', 'german', 'french', 'spanish',
   'italian', 'latvian', 'slovak', 'chinese', 'japanese', 'korean',
   'arabic', 'portuguese', 'dutch', 'swedish', 'norwegian', 'finnish',
-  'jewish', 'azerbaijani', 'turkish', 'armenian',
+  'hebrew', 'azerbaijani', 'turkish', 'armenian', 'georgian'
 ] as const;
 
 export type LanguageKey = (typeof languages)[number];
 
 export const languageNames: Record<Lang, Record<LanguageKey, string>> = {
   en: {
-    georgian: 'Georgian', english: 'English', russian: 'Russian',
-    german: 'German', french: 'French', spanish: 'Spanish',
-    italian: 'Italian', latvian: 'Latvian', slovak: 'Slovak',
-    chinese: 'Chinese', japanese: 'Japanese', korean: 'Korean',
-    arabic: 'Arabic', portuguese: 'Portuguese', dutch: 'Dutch',
-    swedish: 'Swedish', norwegian: 'Norwegian', finnish: 'Finnish',
-    jewish: 'Jewish', azerbaijani: 'Azerbaijani', turkish: 'Turkish',
-    armenian: 'Armenian',
+    polish: "Polish", english: "English", russian: "Russian",
+    german: "German", french: "French", spanish: "Spanish",
+    italian: "Italian", latvian: "Latvian", slovak: "Slovak",
+    chinese: "Chinese", japanese: "Japanese", korean: "Korean",
+    arabic: "Arabic", portuguese: "Portuguese", dutch: "Dutch",
+    swedish: "Swedish", norwegian: "Norwegian", finnish: "Finnish",
+    hebrew: "Hebrew", azerbaijani: "Azerbaijani", turkish: "Turkish",
+    armenian: "Armenian", georgian: "Georgian",
   },
   pl: {
-    georgian: 'Gruziński', english: 'Angielski', russian: 'Rosyjski',
+    polish: 'Polski', english: 'Angielski', russian: 'Rosyjski',
     german: 'Niemiecki', french: 'Francuski', spanish: 'Hiszpański',
     italian: 'Włoski', latvian: 'Łotewski', slovak: 'Słowacki',
     chinese: 'Chiński', japanese: 'Japoński', korean: 'Koreański',
     arabic: 'Arabski', portuguese: 'Portugalski', dutch: 'Holenderski',
     swedish: 'Szwedzki', norwegian: 'Norweski', finnish: 'Fiński',
-    jewish: 'Hebrajski', azerbaijani: 'Azerbejdżański', turkish: 'Turecki',
-    armenian: 'Ormiański',
+    hebrew: 'Hebrajski', azerbaijani: 'Azerbejdżański', turkish: 'Turecki',
+    armenian: 'Ormiański', georgian: 'Gruziński',
   },
 };
 
 export const languagePrices: Record<string, number> = {
-  english: 22.5,
-  russian: 22.5,
+  english: 50,
+  russian: 50,
   german: 35,
   french: 35,
   spanish: 50,
@@ -60,10 +60,11 @@ export const CONTACT = {
   emailForCopy: 'notarytranslation24@gmail.com',
   whatsapp: '+995591729911',
   address: {
-    en: 'Tbilisi, Business Center Karvasla, 7 Kotne Dadiani St.',
-    pl: 'Tbilisi, Centrum Biznesowe Karvasla, ul. Cotne Dadiani 7',
+    en: 'Poznanska 37, 00-687 Warsaw, Poland',
+    pl: 'ul. Poznańska 37, 00-687 Warszawa, Polska',
   },
-  googleMapsUrl: 'https://maps.app.goo.gl/VJ6hqwzq2NhoFH3v6',
+  googleMapsUrl: 'https://maps.app.goo.gl/JsGbJksVDEcUrawK9',
   googleMapsEmbedSrc:
-    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2977.9971810990783!2d44.79694!3d41.6933!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDQxJzM2LjAiTiA0NMKwNDcnNDkuMCJF!5e0!3m2!1sen!2sge!4v1234567890',
+    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2443.8047905447916!2d21.0097512!3d52.228764299999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471eccf2ef9c1663%3A0x1dcc975c6cfe6e2a!2sPozna%C5%84ska%2037%2C%2000-689%20Warszawa%2C%20Poland!5e0!3m2!1sen!2sge!4v1776264739394!5m2!1sen!2sge',
 };
+

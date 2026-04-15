@@ -12,13 +12,13 @@ interface Props {
 const steps = {
   en: [
     { icon: Upload, title: 'Upload Your Document', desc: 'Send us your document via our online form or WhatsApp.' },
-    { icon: FileCheck, title: 'We Translate & Certify', desc: 'Our certified translators complete the translation with notary stamp.' },
-    { icon: CheckCircle, title: 'Receive Your Translation', desc: 'Pick up in person or receive by courier — same day available.' },
+    { icon: FileCheck, title: 'We Translate & Certify', desc: 'Our certified translators complete the sworn translation .' },
+    { icon: CheckCircle, title: 'Receive Your Translation', desc: 'Recieve a digital copy of your translated document.' },
   ],
   pl: [
     { icon: Upload, title: 'Prześlij dokument', desc: 'Wyślij nam dokument przez formularz online lub WhatsApp.' },
-    { icon: FileCheck, title: 'Tłumaczymy i poświadczamy', desc: 'Certyfikowani tłumacze wykonują tłumaczenie z pieczęcią notarialną.' },
-    { icon: CheckCircle, title: 'Odbierz tłumaczenie', desc: 'Odbierz osobiście lub kurierem — dostawa tego samego dnia.' },
+    { icon: FileCheck, title: 'Tłumaczymy i poświadczamy', desc: 'Nasi certyfikowani tłumacze wykonują poświadczoną wersję tłumaczenia.' },
+    { icon: CheckCircle, title: 'Odbierz tłumaczenie', desc: 'Otrzymaj cyfrową kopię swojego przetłumaczonego dokumentu.' },
   ],
 };
 

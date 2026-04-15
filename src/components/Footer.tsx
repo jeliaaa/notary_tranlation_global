@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Phone, Mail, MapPin } from 'lucide-react';
+import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { Lang } from '@/lib/translations';
 import { getT } from '@/lib/translations';
@@ -19,13 +19,24 @@ const scrollToSection = (id: string) => {
   window.scrollTo({ top, behavior: 'smooth' });
 };
 
+const getWhatsAppLink = () => {
+  const phone = CONTACT.phone1.short.replace(/\D/g, '');
+  const message = encodeURIComponent('Hello, I would like to get more information.');
+  return `https://wa.me/${phone}?text=${message}`;
+};
+
+const handleContactUsClick = () => {
+  const link = getWhatsAppLink();
+  window.open(link, '_blank');
+}
+
 export default function Footer({ lang }: Props) {
   const t = getT(lang);
   const router = useRouter();
   const year = new Date().getFullYear();
 
   const handleEmailCopy = () => {
-    navigator.clipboard.writeText(CONTACT.emailForCopy).catch(() => {});
+    navigator.clipboard.writeText(CONTACT.emailForCopy).catch(() => { });
     alert('Email copied');
   };
 
@@ -122,7 +133,7 @@ export default function Footer({ lang }: Props) {
           <div>
             <h4 className="text-white font-semibold mb-4">{t.getInTouch}</h4>
             <ul className="space-y-3 text-sm">
-              <li>
+              {/* <li>
                 <a
                   href={`tel:${CONTACT.phone1.tel}`}
                   className="flex items-center gap-2 hover:text-primary-400 transition-colors"
@@ -138,6 +149,14 @@ export default function Footer({ lang }: Props) {
                 >
                   <Phone className="w-4 h-4 flex-shrink-0" />
                   {CONTACT.phone2.display}
+                </a>
+              </li> */}
+              <li>
+                <a onClick={handleContactUsClick}
+                  className="flex items-center gap-2 hover:text-primary-400 transition-colors"
+                >
+                  <MessageCircle className="w-4 h-4 flex-shrink-0" />
+                  {t.contactViaWhatsApp}
                 </a>
               </li>
               <li>

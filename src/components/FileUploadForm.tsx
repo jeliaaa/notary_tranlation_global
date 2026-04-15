@@ -49,17 +49,6 @@ interface Toast {
 
 let toastCounter = 0;
 
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      resolve(result.split(',')[1]);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
 
 export default function FileUploadForm({ lang }: Props) {
   const c = content[lang];
@@ -97,15 +86,29 @@ export default function FileUploadForm({ lang }: Props) {
     if (!files.length || !email) return;
     setLoading(true);
     try {
-      const attachments = await Promise.all(
-        files.map(async (file) => ({ name: file.name, data: await fileToBase64(file) }))
-      );
+      // 1. Send files + contact info to our inbox via formsubmit.co
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('phone', phone || 'Not provided');
+      formData.append('_subject', 'New translation request – Translation House');
+      formData.append('_captcha', 'false');
+      files.forEach((file) => formData.append('attachment', file));
+
+      const fsRes = await fetch('https://formsubmit.co/ajax/info@th.com.ge', {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: formData,
+      });
+      if (!fsRes.ok) throw new Error('formsubmit failed');
+
+      // 2. Send confirmation template to the user via EmailJS
       await (window as unknown as { emailjs: typeof emailjs }).emailjs.send(
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        { email, phone, file_count: files.length, file_names: files.map((f) => f.name).join(', '), attachments },
+        { to_email: email, phone: phone || 'Not provided', file_names: files.map((f) => f.name).join(', ') },
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
       );
+
       addToast('success', c.successMsg);
       setFiles([]);
       setEmail('');

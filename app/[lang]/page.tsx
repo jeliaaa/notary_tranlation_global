@@ -50,7 +50,7 @@ const faqItems = {
   en: [
     { q: 'How long does a Translation House translation take?', a: 'Standard translations are usually completed within 1–2 business days. Express same-day service is available for urgent documents.' },
     { q: 'What documents can you translate?', a: 'We translate all official documents including passports, birth certificates, marriage certificates, diplomas, contracts, medical records, and court documents.' },
-    { q: 'What is the price per page?', a: 'Prices start from 22.5 ₾ per page for English/Russian translations and vary by language.' },
+    { q: 'What is the price per page?', a: 'Prices start from 50 zł (12 €) per page for English/Russian translations. Other languages — 99 zł (23 €) per page.' },
     { q: 'Do you provide certified / notarized translations?', a: 'Yes. All our translations can be notarially certified, making them legally valid for official use in Georgia and internationally.' },
     { q: 'Can I submit a document online?', a: 'Absolutely. Upload your document through our online form or send it via WhatsApp.' },
     { q: 'Do you translate to languages other than Georgian?', a: 'Yes — we translate between 20+ language pairs including English, Polish, German, French, Turkish, Armenian, Arabic, Chinese, and many more.' },
@@ -58,7 +58,7 @@ const faqItems = {
   pl: [
     { q: 'Jak długo trwa tłumaczenie notarialne?', a: 'Standardowe tłumaczenia są zazwyczaj gotowe w ciągu 1–2 dni roboczych. Dostępna jest usługa ekspresowa na ten sam dzień.' },
     { q: 'Jakie dokumenty możecie przetłumaczyć?', a: 'Tłumaczymy wszystkie oficjalne dokumenty, w tym paszporty, akty urodzenia, akty małżeństwa, dyplomy, umowy, dokumentację medyczną i dokumenty sądowe.' },
-    { q: 'Jaka jest cena za stronę?', a: 'Ceny zaczynają się od 22,5 ₾ za stronę i różnią się w zależności od języka.' },
+    { q: 'Jaka jest cena za stronę?', a: 'Ceny zaczynają się od 50 zł (12 €) za stronę dla tłumaczeń angielskiego/rosyjskiego. Inne języki — 99 zł (23 €) za stronę.' },
     { q: 'Czy oferujecie certyfikowane tłumaczenia notarialne?', a: 'Tak. Wszystkie nasze tłumaczenia mogą być poświadczone notarialnie, co czyni je prawnie ważnymi.' },
     { q: 'Czy mogę przesłać dokument online?', a: 'Oczywiście. Prześlij swój dokument przez nasz formularz online lub wyślij go przez WhatsApp.' },
     { q: 'Czy tłumaczycie na języki inne niż gruziński?', a: 'Tak — pracujemy z ponad 20 parami językowymi, w tym angielskim, polskim, niemieckim, francuskim, tureckim i wieloma innymi.' },
@@ -86,7 +86,7 @@ export default async function HomePage({ params }: Props) {
         email: 'info@th.com.ge',
         url: 'https://notarytranslation.ge',
         openingHours: 'Mo-Su 00:00-24:00',
-        priceRange: '₾₾',
+        priceRange: '$$',
       },
       {
         '@type': 'FAQPage',

@@ -5,22 +5,23 @@ import { motion } from 'framer-motion';
 import type { Lang } from '@/lib/translations';
 import { getT } from '@/lib/translations';
 import { languageNames } from '@/lib/data';
+import { useCurrency } from '@/lib/currency-context';
 import AnimatedSection from './AnimatedSection';
 
 interface Props {
   lang: Lang;
 }
 
-const priceGroups = [
-  { price: 22.5, langs: ['english', 'russian'] },
-  { price: 25, langs: ['turkish', 'armenian'] },
-  { price: 27.5, langs: ['azerbaijani'] },
-  { price: 35, langs: ['german', 'french', 'italian', 'latvian'] },
-  { price: 37.5, langs: ['slovak'] },
-  { price: 50, langs: ['spanish', 'portuguese', 'dutch', 'jewish'] },
-  { price: 57.5, langs: ['arabic'] },
-  { price: 72.5, langs: ['chinese'] },
-  { price: 100, langs: ['japanese', 'korean'] },
+const priceGroupDefs = [
+  { tier: 'cheap' as const, langs: ['english', 'russian'] },
+  { tier: 'standard' as const, langs: ['turkish', 'armenian'] },
+  { tier: 'standard' as const, langs: ['azerbaijani'] },
+  { tier: 'standard' as const, langs: ['german', 'french', 'italian', 'latvian'] },
+  { tier: 'standard' as const, langs: ['slovak'] },
+  { tier: 'standard' as const, langs: ['spanish', 'portuguese', 'dutch', 'jewish'] },
+  { tier: 'standard' as const, langs: ['arabic'] },
+  { tier: 'standard' as const, langs: ['chinese'] },
+  { tier: 'standard' as const, langs: ['japanese', 'korean'] },
 ];
 
 const headings = {
@@ -42,9 +43,15 @@ const headings = {
   },
 };
 
-const notaryLines = {
-  en: ['1 page: 6 ₾', '2–10 pages: 4 ₾ per page', '11–50 pages: 3 ₾ per page', '51+ pages: 2 ₾ per page'],
-  pl: ['1 strona: 6 ₾', '2–10 stron: 4 ₾ za stronę', '11–50 stron: 3 ₾ za stronę', '51+ stron: 2 ₾ za stronę'],
+const notaryData = {
+  PLN: {
+    en: ['1 page: 8 zł', '2–10 pages: 6 zł per page', '11–50 pages: 4 zł per page', '51+ pages: 3 zł per page'],
+    pl: ['1 strona: 8 zł', '2–10 stron: 6 zł za stronę', '11–50 stron: 4 zł za stronę', '51+ stron: 3 zł za stronę'],
+  },
+  EUR: {
+    en: ['1 page: €2', '2–10 pages: €1.50 per page', '11–50 pages: €1 per page', '51+ pages: €0.75 per page'],
+    pl: ['1 strona: €2', '2–10 stron: €1,50 za stronę', '11–50 stron: €1 za stronę', '51+ stron: €0,75 za stronę'],
+  },
 };
 
 const discountLines = {
@@ -52,10 +59,26 @@ const discountLines = {
   pl: ['10% rabatu dla 50+ stron', '15% rabatu dla 100+ stron'],
 };
 
+const tierPrices = {
+  PLN: { cheap: 50, standard: 99 },
+  EUR: { cheap: 12, standard: 23 },
+};
+
 export default function Prices({ lang }: Props) {
   const t = getT(lang);
   const h = headings[lang];
   const names = languageNames[lang];
+  const { currency, formatPrice } = useCurrency();
+
+  // Deduplicate groups by price (all "standard" languages collapse into one row)
+  const grouped = new Map<number, string[]>();
+  for (const g of priceGroupDefs) {
+    const price = tierPrices[currency][g.tier];
+    const existing = grouped.get(price) ?? [];
+    existing.push(...g.langs);
+    grouped.set(price, existing);
+  }
+  const priceGroups = Array.from(grouped.entries()).map(([price, langs]) => ({ price, langs }));
 
   return (
     <section id="prices" className="py-16 sm:py-20 bg-gradient-to-br from-primary-50 to-white">
@@ -86,7 +109,7 @@ export default function Prices({ lang }: Props) {
                       transition={{ delay: idx * 0.08 }}
                       className={`border-b border-gray-50 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
                     >
-                      <td className="py-3.5 px-6 text-lg font-semibold text-primary-600">{price} ₾</td>
+                      <td className="py-3.5 px-6 text-lg font-semibold text-primary-600">{formatPrice(price)}</td>
                       <td className="py-3.5 px-6 text-gray-700 text-sm">
                         {langs.map((l) => names[l as keyof typeof names]).join(', ')}
                       </td>
@@ -106,7 +129,7 @@ export default function Prices({ lang }: Props) {
                 <h3 className="font-bold text-gray-900">{h.notaryTitle}</h3>
               </div>
               <ul className="space-y-2">
-                {notaryLines[lang].map((line) => (
+                {notaryData[currency][lang].map((line) => (
                   <li key={line} className="flex items-center gap-2 text-sm text-gray-700">
                     <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
                     {line}

@@ -1,10 +1,11 @@
-import { languagePrices } from './data';
+import { getLanguagePrice } from './data';
 import type { Lang } from './translations';
+import type { Currency } from './currency-context';
 
-export function getLanguagePairPrice(from: string, to: string): number {
-  if (from === 'georgian') return languagePrices[to] ?? 0;
-  if (to === 'georgian') return languagePrices[from] ?? 0;
-  return Math.max(languagePrices[from] ?? 0, languagePrices[to] ?? 0);
+export function getLanguagePairPrice(from: string, to: string, currency: Currency = 'PLN'): number {
+  if (from === 'georgian') return getLanguagePrice(to, currency);
+  if (to === 'georgian') return getLanguagePrice(from, currency);
+  return Math.max(getLanguagePrice(from, currency), getLanguagePrice(to, currency));
 }
 
 export function calcTranslation(basePrice: number, pages: number) {
@@ -15,13 +16,19 @@ export function calcTranslation(basePrice: number, pages: number) {
   return { cost: cost - discount, discount };
 }
 
-export function calcNotary(pages: number): number {
+const notaryRates: Record<Currency, { single: number; upTo10: number; upTo50: number; over50: number; fee: number }> = {
+  PLN: { single: 8, upTo10: 6, upTo50: 4, over50: 3, fee: 7 },
+  EUR: { single: 2, upTo10: 1.5, upTo50: 1, over50: 0.75, fee: 1.5 },
+};
+
+export function calcNotary(pages: number, currency: Currency = 'PLN'): number {
+  const r = notaryRates[currency];
   let pricePerPage: number;
-  if (pages === 1) pricePerPage = 6;
-  else if (pages <= 10) pricePerPage = 4;
-  else if (pages <= 50) pricePerPage = 3;
-  else pricePerPage = 2;
-  return pricePerPage * pages * 1.18 + 5;
+  if (pages === 1) pricePerPage = r.single;
+  else if (pages <= 10) pricePerPage = r.upTo10;
+  else if (pages <= 50) pricePerPage = r.upTo50;
+  else pricePerPage = r.over50;
+  return pricePerPage * pages + r.fee;
 }
 
 export function calcDelivery(pages: number, notary: boolean, lang: Lang): string {

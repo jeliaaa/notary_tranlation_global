@@ -32,25 +32,40 @@ export const languageNames: Record<Lang, Record<LanguageKey, string>> = {
   },
 };
 
+import type { Currency } from './currency-context';
+
+const cheapLangs = new Set(['english', 'russian']);
+
+const currencyPrices: Record<Currency, { cheap: number; standard: number }> = {
+  PLN: { cheap: 50, standard: 99 },
+  EUR: { cheap: 12, standard: 23 },
+};
+
+export function getLanguagePrice(lang: string, currency: Currency): number {
+  const tier = cheapLangs.has(lang) ? 'cheap' : 'standard';
+  return currencyPrices[currency][tier];
+}
+
+// Legacy export used by pricing.ts — defaults to PLN
 export const languagePrices: Record<string, number> = {
   english: 50,
   russian: 50,
-  german: 35,
-  french: 35,
-  spanish: 50,
-  italian: 35,
-  latvian: 35,
-  slovak: 37.5,
-  chinese: 72.5,
-  japanese: 100,
-  korean: 100,
-  arabic: 57.5,
-  portuguese: 50,
-  dutch: 50,
-  jewish: 50,
-  azerbaijani: 27.5,
-  turkish: 25,
-  armenian: 25,
+  german: 99,
+  french: 99,
+  spanish: 99,
+  italian: 99,
+  latvian: 99,
+  slovak: 99,
+  chinese: 99,
+  japanese: 99,
+  korean: 99,
+  arabic: 99,
+  portuguese: 99,
+  dutch: 99,
+  jewish: 99,
+  azerbaijani: 99,
+  turkish: 99,
+  armenian: 99,
 };
 
 export const CONTACT = {

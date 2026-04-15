@@ -8,6 +8,7 @@ import { getT } from '@/lib/translations';
 import { languages, languageNames } from '@/lib/data';
 import { getLanguagePairPrice, calcTranslation, calcNotary, calcDelivery } from '@/lib/pricing';
 import { CONTACT } from '@/lib/data';
+import { useCurrency } from '@/lib/currency-context';
 
 interface Props {
   lang: Lang;
@@ -25,6 +26,7 @@ interface Result {
 export default function PriceCalculator({ lang }: Props) {
   const t = getT(lang);
   const names = languageNames[lang];
+  const { currency, formatPrice } = useCurrency();
 
   const [from, setFrom] = useState('polish');
   const [to, setTo] = useState('english');
@@ -37,9 +39,9 @@ export default function PriceCalculator({ lang }: Props) {
 
   const handleCalculate = (e: React.FormEvent) => {
     e.preventDefault();
-    const basePrice = getLanguagePairPrice(from, to);
+    const basePrice = getLanguagePairPrice(from, to, currency);
     const { cost, discount } = calcTranslation(basePrice, pages);
-    const notaryCost = notary ? calcNotary(pages) : null;
+    const notaryCost = notary ? calcNotary(pages, currency) : null;
     const total = cost + (notaryCost ?? 0);
     const delivery = calcDelivery(pages, notary, lang);
     setResult({ basePrice, translationCost: cost, discount, notaryCost, total, delivery });
@@ -171,27 +173,27 @@ export default function PriceCalculator({ lang }: Props) {
                 <div className="space-y-3 mb-5">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">{t.pricePerPage}</span>
-                    <span className="font-medium">{result.basePrice} ₾</span>
+                    <span className="font-medium">{formatPrice(result.basePrice)}</span>
                   </div>
                   {result.discount > 0 && (
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">{t.discount}</span>
-                      <span className="text-green-600 font-medium">-{result.discount.toFixed(2)} ₾</span>
+                      <span className="text-green-600 font-medium">-{formatPrice(result.discount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">{t.translationCost}</span>
-                    <span className="font-medium">{result.translationCost.toFixed(2)} ₾</span>
+                    <span className="font-medium">{formatPrice(result.translationCost)}</span>
                   </div>
                   {result.notaryCost !== null && (
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">{t.notaryCost}</span>
-                      <span className="font-medium">{result.notaryCost.toFixed(2)} ₾</span>
+                      <span className="font-medium">{formatPrice(result.notaryCost)}</span>
                     </div>
                   )}
                   <div className="border-t border-gray-100 pt-3 flex justify-between">
                     <span className="font-bold text-gray-900 text-base">{t.totalPrice}</span>
-                    <span className="font-bold text-primary-600 text-xl">{result.total.toFixed(2)} ₾</span>
+                    <span className="font-bold text-primary-600 text-xl">{formatPrice(result.total)}</span>
                   </div>
                 </div>
 

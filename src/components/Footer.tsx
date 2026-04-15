@@ -1,6 +1,7 @@
 'use client';
 
-import { Globe, Phone, Mail, MapPin } from 'lucide-react';
+import Image from 'next/image';
+import { Phone, Mail, MapPin } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { Lang } from '@/lib/translations';
 import { getT } from '@/lib/translations';
@@ -41,9 +42,8 @@ export default function Footer({ lang }: Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2 text-white font-bold text-lg mb-3">
-              <Globe className="w-5 h-5 text-primary-400" />
-              NotaryTranslation
+            <div className="mb-3">
+              <Image src="/logo.svg" alt="Translation House" width={140} height={66} />
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">{t.mainTitle}</p>
           </div>
@@ -167,7 +167,7 @@ export default function Footer({ lang }: Props) {
 
       {/* Copyright */}
       <div className="border-t border-gray-800 py-5 text-center text-sm text-gray-500">
-        © {year} NotaryTranslation. {t.allRightsReserved}
+        © {year} Translation House. {t.allRightsReserved}
       </div>
     </footer>
   );

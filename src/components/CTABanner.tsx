@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Upload, Calculator, ShieldCheck, Clock, Zap } from 'lucide-react';
 import type { Lang } from '@/lib/translations';
@@ -10,7 +11,7 @@ interface Props {
 
 const content = {
   en: {
-    heading: 'Professional Notary Translation Services',
+    heading: 'Professional Translation House Services',
     subtitle: 'Fast, accurate, and certified translations for all your official documents. Trusted by thousands of clients in Tbilisi.',
     uploadBtn: 'Upload Document Now',
     calcBtn: 'Calculate Price',
@@ -70,6 +71,15 @@ export default function CTABanner({ lang }: Props) {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              className="mb-6"
+            >
+              <Image src="/logo.svg" alt="Translation House" width={280} height={132} priority />
+            </motion.div>
+
             <motion.h1
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}

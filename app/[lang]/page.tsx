@@ -15,11 +15,11 @@ interface Props {
 
 const meta = {
   en: {
-    title: 'NotaryTranslation – Professional Notary Translation Services in Tbilisi',
+    title: 'Translation House – Professional Translation House Services in Tbilisi',
     description: 'Fast, certified translations from Georgian to English, Polish, German, and 20+ languages. Same-day service available. Get a free quote in minutes.',
   },
   pl: {
-    title: 'NotaryTranslation – Profesjonalne usługi tłumaczenia notarialnego w Tbilisi',
+    title: 'Translation House – Profesjonalne usługi tłumaczenia notarialnego w Tbilisi',
     description: 'Szybkie, certyfikowane tłumaczenia z języka gruzińskiego na angielski, polski, niemiecki i 20+ języków. Dostawa tego samego dnia. Bezpłatna wycena w kilka minut.',
   },
 };
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const faqItems = {
   en: [
-    { q: 'How long does a notary translation take?', a: 'Standard translations are usually completed within 1–2 business days. Express same-day service is available for urgent documents.' },
+    { q: 'How long does a Translation House translation take?', a: 'Standard translations are usually completed within 1–2 business days. Express same-day service is available for urgent documents.' },
     { q: 'What documents can you translate?', a: 'We translate all official documents including passports, birth certificates, marriage certificates, diplomas, contracts, medical records, and court documents.' },
     { q: 'What is the price per page?', a: 'Prices start from 22.5 ₾ per page for English/Russian translations and vary by language.' },
     { q: 'Do you provide certified / notarized translations?', a: 'Yes. All our translations can be notarially certified, making them legally valid for official use in Georgia and internationally.' },
@@ -75,7 +75,7 @@ export default async function HomePage({ params }: Props) {
     '@graph': [
       {
         '@type': 'LocalBusiness',
-        name: 'NotaryTranslation',
+        name: 'Translation House',
         address: {
           '@type': 'PostalAddress',
           streetAddress: '7 Kotne Dadiani St.',

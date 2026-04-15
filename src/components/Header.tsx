@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Globe, Menu, X, Phone, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
+import { Menu, X, Phone, ChevronDown } from 'lucide-react';
 import type { Lang } from '@/lib/translations';
 import { getT } from '@/lib/translations';
 import { CONTACT } from '@/lib/data';
@@ -99,10 +100,9 @@ export default function Header({ lang }: Props) {
           {/* Logo */}
           <button
             onClick={handleLogoClick}
-            className="flex items-center gap-2 text-primary-600 font-bold text-lg hover:text-primary-700 transition-colors"
+            className="flex items-center hover:opacity-80 transition-opacity"
           >
-            <Globe className="w-6 h-6 flex-shrink-0" />
-            <span className="hidden xs:inline">NotaryTranslation</span>
+            <Image src="/logo.svg" alt="Translation House" width={160} height={75} priority />
           </button>
 
           {/* Desktop Nav */}

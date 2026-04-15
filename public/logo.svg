@@ -1,0 +1,50 @@
+<svg width="680" height="320" viewBox="0 0 680 320" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>Translation House logo</title>
+  <desc>A house icon with speech bubbles and the text Translation House</desc>
+
+  <defs>
+    <linearGradient id="roofGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4537E"/>
+      <stop offset="100%" stop-color="#7F77DD"/>
+    </linearGradient>
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBEAF0"/>
+      <stop offset="100%" stop-color="#EEEDFE"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(340,160)">
+
+    <polygon points="-72,0 0,-68 72,0" fill="url(#roofGrad)"/>
+
+    <rect x="-58" y="0" width="116" height="88" fill="url(#bodyGrad)" stroke="#D4537E" stroke-width="1.5" rx="3"/>
+
+    <rect x="-18" y="38" width="36" height="50" fill="url(#roofGrad)" rx="4"/>
+
+    <rect x="-40" y="8" width="26" height="22" fill="white" stroke="#AFA9EC" stroke-width="1" rx="3"/>
+    <line x1="-27" y1="8" x2="-27" y2="30" stroke="#AFA9EC" stroke-width="0.8"/>
+    <line x1="-40" y1="19" x2="-14" y2="19" stroke="#AFA9EC" stroke-width="0.8"/>
+
+    <rect x="14" y="8" width="26" height="22" fill="white" stroke="#AFA9EC" stroke-width="1" rx="3"/>
+    <line x1="27" y1="8" x2="27" y2="30" stroke="#AFA9EC" stroke-width="0.8"/>
+    <line x1="14" y1="19" x2="40" y2="19" stroke="#AFA9EC" stroke-width="0.8"/>
+
+    <circle cx="4" cy="-44" r="3" fill="white" opacity="0.7"/>
+
+    <rect x="52" y="-52" width="38" height="26" fill="#7F77DD" rx="6"/>
+    <path d="M60,-26 l0,8 l8,-8" fill="#7F77DD"/>
+    <line x1="59" y1="-44" x2="83" y2="-44" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="59" y1="-38" x2="79" y2="-38" stroke="white" stroke-width="2" stroke-linecap="round"/>
+
+    <rect x="-90" y="-36" width="38" height="26" fill="#D4537E" rx="6"/>
+    <path d="M-60,-10 l0,8 l-8,-8" fill="#D4537E"/>
+    <line x1="-83" y1="-28" x2="-59" y2="-28" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-83" y1="-22" x2="-65" y2="-22" stroke="white" stroke-width="2" stroke-linecap="round"/>
+
+  </g>
+
+  <text x="340" y="256" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="28" font-weight="600" letter-spacing="-0.5" fill="url(#roofGrad)">Translation House</text>
+
+  <text x="340" y="282" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="400" fill="#9991CC" letter-spacing="2.5">CERTIFIED · PROFESSIONAL · TRUSTED</text>
+
+</svg>

@@ -17,17 +17,17 @@ export interface BlogPost {
 export const blogPosts: BlogPost[] = [
   {
     slug: 'what-is-notary-translation',
-    title: 'What Is a Notary Translation and When Do You Need One?',
+    title: 'What Is a Translation House and When Do You Need One?',
     titlePl: 'Czym jest tłumaczenie notarialne i kiedy jest potrzebne?',
     excerpt:
-      'A notary translation is a certified translation of official documents stamped by a licensed notary. Learn when you need one and how to get it fast.',
+      'A translation house is a certified translation of official documents stamped by a licensed notary. Learn when you need one and how to get it fast.',
     excerptPl:
       'Tłumaczenie notarialne to certyfikowane tłumaczenie oficjalnych dokumentów opatrzone pieczęcią notariusza. Dowiedz się, kiedy jest potrzebne i jak je szybko uzyskać.',
     content: `
-<h2>What Is a Notary Translation?</h2>
-<p>A notary translation is an official translation of a document that has been certified by a licensed notary public. This process ensures the translation is accurate and legally valid for use in official proceedings.</p>
+<h2>What Is a Translation House?</h2>
+<p>A translation house is an official translation of a document that has been certified by a licensed notary public. This process ensures the translation is accurate and legally valid for use in official proceedings.</p>
 <h2>When Do You Need One?</h2>
-<p>You typically need a notary translation for:</p>
+<p>You typically need a translation house for:</p>
 <ul>
 <li>Immigration and visa applications</li>
 <li>Court and legal proceedings</li>
@@ -36,7 +36,7 @@ export const blogPosts: BlogPost[] = [
 <li>Business contract execution in foreign jurisdictions</li>
 </ul>
 <h2>How to Get One in Tbilisi</h2>
-<p>At NotaryTranslation, we handle the entire process — from translation to notary stamp — same day. Simply upload your document via our online form or send it on WhatsApp, and we'll have your certified translation ready within hours.</p>
+<p>At Translation House, we handle the entire process — from translation to notary stamp — same day. Simply upload your document via our online form or send it on WhatsApp, and we'll have your certified translation ready within hours.</p>
     `.trim(),
     contentPl: `
 <h2>Czym jest tłumaczenie notarialne?</h2>
@@ -51,10 +51,10 @@ export const blogPosts: BlogPost[] = [
 <li>Wykonaniu umów handlowych w obcych jurysdykcjach</li>
 </ul>
 <h2>Jak to uzyskać w Tbilisi</h2>
-<p>W NotaryTranslation zajmujemy się całym procesem — od tłumaczenia po pieczęć notarialną — tego samego dnia. Prześlij dokument przez nasz formularz online lub wyślij go na WhatsApp, a certyfikowane tłumaczenie będzie gotowe w ciągu kilku godzin.</p>
+<p>W Translation House zajmujemy się całym procesem — od tłumaczenia po pieczęć notarialną — tego samego dnia. Prześlij dokument przez nasz formularz online lub wyślij go na WhatsApp, a certyfikowane tłumaczenie będzie gotowe w ciągu kilku godzin.</p>
     `.trim(),
-    author: 'NotaryTranslation Team',
-    authorPl: 'Zespół NotaryTranslation',
+    author: 'Translation House Team',
+    authorPl: 'Zespół Translation House',
     date: '2024-03-15',
     mainImage: '/blog/notary-translation.jpg',
     readingTime: 4,
@@ -101,8 +101,8 @@ export const blogPosts: BlogPost[] = [
   },
   {
     slug: 'why-same-day-translation-is-possible',
-    title: 'Why Same-Day Translation Is Possible at NotaryTranslation',
-    titlePl: 'Dlaczego tłumaczenie tego samego dnia jest możliwe w NotaryTranslation?',
+    title: 'Why Same-Day Translation Is Possible at Translation House',
+    titlePl: 'Dlaczego tłumaczenie tego samego dnia jest możliwe w Translation House?',
     excerpt:
       "Many clients are surprised we can deliver certified translations in just a few hours. Here's the secret behind our fast turnaround.",
     excerptPl:

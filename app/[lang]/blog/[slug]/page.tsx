@@ -13,9 +13,9 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang: langParam, slug } = await params;
   const post = blogPosts.find((p) => p.slug === slug);
-  if (!post) return { title: 'Blog - NotaryTranslation' };
+  if (!post) return { title: 'Blog - Translation House' };
   const lang = (langParam === 'pl' ? 'pl' : 'en') as Lang;
-  return { title: `${lang === 'pl' ? post.titlePl : post.title} - NotaryTranslation` };
+  return { title: `${lang === 'pl' ? post.titlePl : post.title} - Translation House` };
 }
 
 export default async function BlogPostPage({ params }: Props) {

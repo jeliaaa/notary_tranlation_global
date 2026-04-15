@@ -9,7 +9,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params;
-  const titles: Record<string, string> = { en: 'Terms of Service - NotaryTranslation', pl: 'Regulamin - NotaryTranslation' };
+  const titles: Record<string, string> = { en: 'Terms of Service - Translation House', pl: 'Regulamin - Translation House' };
   return { title: titles[lang] ?? titles.en };
 }
 
@@ -19,7 +19,7 @@ const content = {
     sections: [
       {
         heading: '1. Service Description',
-        text: `NotaryTranslation provides professional document translation and notary certification services based in Tbilisi, Georgia. We translate documents between Georgian and 20+ languages, including English, Polish, Russian, German, French, and others. All translations are performed by certified translators.`,
+        text: `Translation House provides professional document translation and notary certification services based in Tbilisi, Georgia. We translate documents between Georgian and 20+ languages, including English, Polish, Russian, German, French, and others. All translations are performed by certified translators.`,
       },
       {
         heading: '2. User Obligations',
@@ -35,7 +35,7 @@ const content = {
       },
       {
         heading: '5. Liability Limitations',
-        text: `NotaryTranslation is not liable for any indirect, incidental, or consequential damages arising from the use of our services. Our liability is limited to the cost of the service provided. We are not responsible for delays caused by incomplete or illegible documents submitted by the client.`,
+        text: `Translation House is not liable for any indirect, incidental, or consequential damages arising from the use of our services. Our liability is limited to the cost of the service provided. We are not responsible for delays caused by incomplete or illegible documents submitted by the client.`,
       },
       {
         heading: '6. Contact',
@@ -48,7 +48,7 @@ const content = {
     sections: [
       {
         heading: '1. Opis usługi',
-        text: `NotaryTranslation świadczy profesjonalne usługi tłumaczenia dokumentów i poświadczenia notarialnego z siedzibą w Tbilisi w Gruzji. Tłumaczymy dokumenty między językiem gruzińskim a ponad 20 językami, w tym angielskim, polskim, rosyjskim, niemieckim, francuskim i innymi. Wszystkie tłumaczenia są wykonywane przez certyfikowanych tłumaczy.`,
+        text: `Translation House świadczy profesjonalne usługi tłumaczenia dokumentów i poświadczenia notarialnego z siedzibą w Tbilisi w Gruzji. Tłumaczymy dokumenty między językiem gruzińskim a ponad 20 językami, w tym angielskim, polskim, rosyjskim, niemieckim, francuskim i innymi. Wszystkie tłumaczenia są wykonywane przez certyfikowanych tłumaczy.`,
       },
       {
         heading: '2. Obowiązki użytkownika',
@@ -64,7 +64,7 @@ const content = {
       },
       {
         heading: '5. Ograniczenia odpowiedzialności',
-        text: `NotaryTranslation nie ponosi odpowiedzialności za pośrednie, przypadkowe ani wynikowe szkody wynikające z korzystania z naszych usług. Nasza odpowiedzialność jest ograniczona do kosztu świadczonej usługi.`,
+        text: `Translation House nie ponosi odpowiedzialności za pośrednie, przypadkowe ani wynikowe szkody wynikające z korzystania z naszych usług. Nasza odpowiedzialność jest ograniczona do kosztu świadczonej usługi.`,
       },
       {
         heading: '6. Kontakt',

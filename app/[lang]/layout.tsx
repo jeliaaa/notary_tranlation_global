@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const metadata: Metadata = {
-  title: 'NotaryTranslation',
+  title: 'Translation House',
 };
 
 export default async function LangLayout({ children, params }: Props) {

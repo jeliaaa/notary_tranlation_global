@@ -9,7 +9,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params;
-  const titles: Record<string, string> = { en: 'Privacy Policy - NotaryTranslation', pl: 'Polityka prywatności - NotaryTranslation' };
+  const titles: Record<string, string> = { en: 'Privacy Policy - Translation House', pl: 'Polityka prywatności - Translation House' };
   return { title: titles[lang] ?? titles.en };
 }
 
@@ -19,7 +19,7 @@ const content = {
     sections: [
       {
         heading: '1. Introduction',
-        text: `NotaryTranslation ("we", "us", "our") is committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard information you provide when using our website and services. We collect the following personal data: name, email address, phone number, and the document files you upload through our online form.`,
+        text: `Translation House ("we", "us", "our") is committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard information you provide when using our website and services. We collect the following personal data: name, email address, phone number, and the document files you upload through our online form.`,
       },
       {
         heading: '2. How We Use Your Data',
@@ -44,7 +44,7 @@ const content = {
     sections: [
       {
         heading: '1. Wprowadzenie',
-        text: `NotaryTranslation ("my", "nas", "nasz") zobowiązuje się do ochrony Twoich danych osobowych. Niniejsza Polityka prywatności wyjaśnia, w jaki sposób zbieramy, używamy i chronimy informacje, które podajesz podczas korzystania z naszej strony i usług. Zbieramy następujące dane osobowe: imię i nazwisko, adres e-mail, numer telefonu oraz pliki dokumentów przesłanych przez formularz online.`,
+        text: `Translation House ("my", "nas", "nasz") zobowiązuje się do ochrony Twoich danych osobowych. Niniejsza Polityka prywatności wyjaśnia, w jaki sposób zbieramy, używamy i chronimy informacje, które podajesz podczas korzystania z naszej strony i usług. Zbieramy następujące dane osobowe: imię i nazwisko, adres e-mail, numer telefonu oraz pliki dokumentów przesłanych przez formularz online.`,
       },
       {
         heading: '2. Jak używamy Twoich danych',

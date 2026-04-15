@@ -9,7 +9,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params;
-  const titles: Record<string, string> = { en: 'About Us - NotaryTranslation', pl: 'O nas - NotaryTranslation' };
+  const titles: Record<string, string> = { en: 'About Us - Translation House', pl: 'O nas - Translation House' };
   return { title: titles[lang] ?? titles.en };
 }
 

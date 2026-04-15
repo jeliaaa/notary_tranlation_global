@@ -15,7 +15,7 @@ const faqData = {
     title: 'Frequently Asked Questions',
     subtitle: 'Everything you need to know about our translation services',
     items: [
-      { q: 'How long does a notary translation take?', a: 'Standard translations are usually completed within 1–2 business days. Express same-day service is available for urgent documents — contact us for details.' },
+      { q: 'How long does a translation house translation take?', a: 'Standard translations are usually completed within 1–2 business days. Express same-day service is available for urgent documents — contact us for details.' },
       { q: 'What documents can you translate?', a: 'We translate all official documents including passports, birth certificates, marriage certificates, diplomas, contracts, medical records, court documents, and more.' },
       { q: 'What is the price per page?', a: 'Prices start from 22.5 ₾ per page for English/Russian translations, and vary by language. Use our price calculator for an exact estimate.' },
       { q: 'Do you provide certified / notarized translations?', a: 'Yes. All our translations can be notarially certified, making them legally valid for official use in Georgia and internationally.' },

@@ -16,13 +16,13 @@ const content = {
     uploadBtn: 'Upload Document Now',
     calcBtn: 'Calculate Price',
     badges: [
-      { icon: ShieldCheck, label: 'Certified Translations' },
+      { icon: ShieldCheck, label: 'Sworn Translations' },
       { icon: Clock, label: '5-min Response' },
       { icon: Zap, label: 'Same Day Delivery' },
     ],
   },
   pl: {
-    heading: 'Profesjonalne Usługi Tłumaczenia Notarialnego',
+    heading: 'Profesjonalne Usługi tłumaczenie przysięgłe',
     subtitle: 'Szybkie, dokładne i certyfikowane tłumaczenia wszystkich oficjalnych dokumentów. Zaufało nam tysiące klientów w Warszawie.',
     uploadBtn: 'Prześlij dokument teraz',
     calcBtn: 'Oblicz cenę',

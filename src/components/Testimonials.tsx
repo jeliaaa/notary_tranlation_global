@@ -11,9 +11,9 @@ interface Props {
 
 const testimonials = {
   en: [
-    { name: 'George M.', role: 'Business Owner', text: 'Very satisfied with the service. I received a quick and high-quality translation.' },
-    { name: 'Nino G.', role: 'Lawyer', text: 'Professional team and excellent service. I will definitely use their services again.' },
-    { name: 'Levan K.', role: 'Manager', text: 'The notary approval service saved me a lot of time. Thank you!' },
+    { name: 'Jerzy M.', role: 'Business Owner', text: 'Very satisfied with the service. I received a quick and high-quality translation.' },
+    { name: 'Nina G.', role: 'Lawyer', text: 'Professional team and excellent service. I will definitely use their services again.' },
+    { name: 'Leszek K.', role: 'Manager', text: 'The notary approval service saved me a lot of time. Thank you!' },
   ],
   pl: [
     { name: 'Jerzy M.', role: 'Właściciel firmy', text: 'Bardzo zadowolony z usługi. Otrzymałem szybkie i wysokiej jakości tłumaczenie.' },

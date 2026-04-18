@@ -5,7 +5,12 @@ const INBOX = 'info@th.com.ge';
 const FROM = 'Translation House <noreply@notarytranslation.ge>';
 
 export async function POST(req: NextRequest) {
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  if (!apiKey) {
+    console.error('[send-quote] RESEND_API_KEY is not set. All env keys:', Object.keys(process.env).filter(k => k.includes('RESEND')));
+    return NextResponse.json({ error: 'Server misconfiguration', hint: 'RESEND_API_KEY missing', keys: Object.keys(process.env).filter(k => k.includes('RESEND')) }, { status: 500 });
+  }
+  const resend = new Resend(apiKey);
   try {
     const formData = await req.formData();
     const email = formData.get('email') as string;
@@ -31,7 +36,7 @@ export async function POST(req: NextRequest) {
     const fileList = fileEntries.map((f) => f.name).join(', ');
 
     // 1. Forward request + attachments to inbox
-    await resend.emails.send({
+    const inboxResult = await resend.emails.send({
       from: FROM,
       to: INBOX,
       replyTo: email,
@@ -44,10 +49,14 @@ export async function POST(req: NextRequest) {
       `,
       attachments,
     });
+    if (inboxResult.error) {
+      console.error('[send-quote] inbox email error:', inboxResult.error);
+      return NextResponse.json({ error: inboxResult.error.message }, { status: 500 });
+    }
 
     // 2. Send confirmation to the user
     const isPolish = lang === 'pl';
-    await resend.emails.send({
+    const confirmResult = await resend.emails.send({
       from: FROM,
       to: email,
       subject: isPolish
@@ -55,11 +64,15 @@ export async function POST(req: NextRequest) {
         : 'We received your documents – Translation House',
       html: confirmationTemplate({ email, phone, fileList, isPolish }),
     });
+    if (confirmResult.error) {
+      console.error('[send-quote] confirmation email error:', confirmResult.error);
+      // Inbox email succeeded — don't fail the whole request
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error('[send-quote]', err);
-    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+    console.error('[send-quote] unexpected error:', err);
+    return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }
 

@@ -127,7 +127,7 @@ export const blogPosts: BlogPost[] = [
 <h2>Priorytet dla pilnych dokumentów</h2>
 <p>Oferujemy dedykowane ekspresowe miejsca dla dokumentów pilnych. Skontaktuj się przez WhatsApp lub zadzwoń bezpośrednio — regularnie realizujemy tłumaczenia krótkich dokumentów w ciągu 90 minut.</p>
     `.trim(),
-    author: 'George T.',
+    author: 'Jerzy T.',
     authorPl: 'Jerzy T.',
     date: '2024-05-10',
     mainImage: '/blog/same-day.jpg',

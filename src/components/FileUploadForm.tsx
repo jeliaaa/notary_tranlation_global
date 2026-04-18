@@ -1,14 +1,10 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { Upload, FileText, X, Check, Phone } from 'lucide-react';
+import { Upload, FileText, X, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getT, type Lang } from '@/lib/translations';
 import { CONTACT } from '@/lib/data';
-
-declare const emailjs: {
-  send: (serviceId: string, templateId: string, params: Record<string, unknown>, publicKey: string) => Promise<void>;
-};
 
 interface Props {
   lang: Lang;
@@ -23,7 +19,7 @@ const content = {
     browse: 'browse',
     submitBtn: 'Get Free Quote',
     sending: 'Sending...',
-    orCall: 'Or call us directly:',
+    orCall: 'Or reach us on WhatsApp:',
     successMsg: 'Files sent successfully!',
     errorMsg: 'Something went wrong. Please try again.',
   },
@@ -35,7 +31,7 @@ const content = {
     browse: 'przeglądaj',
     submitBtn: 'Otrzymaj bezpłatną wycenę',
     sending: 'Wysyłanie...',
-    orCall: 'Lub zadzwoń bezpośrednio:',
+    orCall: 'Lub napisz na WhatsApp:',
     successMsg: 'Pliki zostały pomyślnie wysłane!',
     errorMsg: 'Coś poszło nie tak. Spróbuj ponownie.',
   },
@@ -48,7 +44,6 @@ interface Toast {
 }
 
 let toastCounter = 0;
-
 
 export default function FileUploadForm({ lang }: Props) {
   const c = content[lang];
@@ -82,15 +77,10 @@ export default function FileUploadForm({ lang }: Props) {
     addFiles(e.dataTransfer.files);
   };
 
-  const getWhatsAppLink = () => {
-    const phone = CONTACT.phone1.short.replace(/\D/g, '');
-    const message = encodeURIComponent('Hello, I would like to get more information.');
-    return `https://wa.me/${phone}?text=${message}`;
-  };
-
-  const handleContactUsClick = () => {
-    const link = getWhatsAppLink();
-    window.open(link, '_blank');
+  const whatsAppLink = () => {
+    const num = CONTACT.whatsapp.replace(/\D/g, '');
+    const msg = encodeURIComponent(lang === 'pl' ? 'Witaj, chciałbym uzyskać więcej informacji.' : 'Hello, I would like to get more information.');
+    return `https://wa.me/${num}?text=${msg}`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -98,28 +88,14 @@ export default function FileUploadForm({ lang }: Props) {
     if (!files.length || !email) return;
     setLoading(true);
     try {
-      // 1. Send files + contact info to our inbox via formsubmit.co
       const formData = new FormData();
       formData.append('email', email);
       formData.append('phone', phone || 'Not provided');
-      formData.append('_subject', 'New translation request – Translation House');
-      formData.append('_captcha', 'false');
-      files.forEach((file) => formData.append('attachment', file));
+      formData.append('lang', lang);
+      files.forEach((file) => formData.append('files', file));
 
-      const fsRes = await fetch('https://formsubmit.co/ajax/info@th.com.ge', {
-        method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: formData,
-      });
-      if (!fsRes.ok) throw new Error('formsubmit failed');
-
-      // 2. Send confirmation template to the user via EmailJS
-      await (window as unknown as { emailjs: typeof emailjs }).emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        { to_email: email, phone: phone || 'Not provided', file_names: files.map((f) => f.name).join(', ') },
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
-      );
+      const res = await fetch('/api/send-quote', { method: 'POST', body: formData });
+      if (!res.ok) throw new Error('API error');
 
       addToast('success', c.successMsg);
       setFiles([]);
@@ -165,8 +141,9 @@ export default function FileUploadForm({ lang }: Props) {
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
           onClick={() => inputRef.current?.click()}
-          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${dragging ? 'border-primary-500 bg-primary-50' : 'border-gray-300 hover:border-primary-400 bg-white'
-            }`}
+          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
+            dragging ? 'border-primary-500 bg-primary-50' : 'border-gray-300 hover:border-primary-400 bg-white'
+          }`}
         >
           <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
           <p className="text-sm text-gray-600">
@@ -210,11 +187,12 @@ export default function FileUploadForm({ lang }: Props) {
 
         <button
           type="submit"
-          disabled={!files.length || loading}
-          className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-sm transition-all ${files.length && !loading
+          disabled={!files.length || !email || loading}
+          className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-sm transition-all ${
+            files.length && email && !loading
               ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:opacity-90'
               : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            }`}
+          }`}
         >
           {loading ? (
             <>
@@ -228,8 +206,8 @@ export default function FileUploadForm({ lang }: Props) {
 
         <p className="text-center text-sm text-gray-500">
           {c.orCall}{' '}
-          <a onClick={handleContactUsClick} className="text-primary-600 font-medium">
-            {t.contactViaWhatsApp}
+          <a href={whatsAppLink()} target="_blank" rel="noopener noreferrer" className="text-primary-600 font-medium">
+            WhatsApp
           </a>
         </p>
       </form>
@@ -242,8 +220,9 @@ export default function FileUploadForm({ lang }: Props) {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 20, opacity: 0 }}
-              className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-white text-sm font-medium ${toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-                }`}
+              className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-white text-sm font-medium ${
+                toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+              }`}
             >
               {toast.type === 'success' ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
               {toast.message}

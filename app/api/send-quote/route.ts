@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
 const INBOX = 'info@th.com.ge';
-const FROM = 'Translation House <noreply@notarytranslation.ge>';
+const FROM = 'Translation House <info@th.com.ge>';
+
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.RESEND_API_KEY?.trim();

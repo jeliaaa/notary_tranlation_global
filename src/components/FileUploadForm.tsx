@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Upload, FileText, X, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getT, type Lang } from '@/lib/translations';
@@ -47,6 +48,7 @@ let toastCounter = 0;
 
 export default function FileUploadForm({ lang }: Props) {
   const c = content[lang];
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [files, setFiles] = useState<File[]>([]);
@@ -97,10 +99,7 @@ export default function FileUploadForm({ lang }: Props) {
       const res = await fetch('/api/send-quote', { method: 'POST', body: formData });
       if (!res.ok) throw new Error('API error');
 
-      addToast('success', c.successMsg);
-      setFiles([]);
-      setEmail('');
-      setPhone('');
+      router.push(`/${lang}/thank-you-page`);
     } catch {
       addToast('error', c.errorMsg);
     } finally {

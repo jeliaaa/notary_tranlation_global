@@ -32,6 +32,22 @@ export default async function LangLayout({ children, params }: Props) {
           <TawkToWidget />
         </CurrencyProvider>
         <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-ZG73YVWM8Y"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-ZG73YVWM8Y');
+            `,
+          }}
+        />
+        <Script
           id="yandex-metrika"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{

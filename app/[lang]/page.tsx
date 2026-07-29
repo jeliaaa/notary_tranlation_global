@@ -8,6 +8,12 @@ import About from '@/components/About';
 import Prices from '@/components/Prices';
 import Testimonials from '@/components/Testimonials';
 import FAQ from '@/components/FAQ';
+import { faqData } from '@/lib/faq';
+import HowItWorks from '@/components/HowItWorks';
+import BlogStrip from '@/components/BlogStrip';
+import AnimatedSection from '@/components/AnimatedSection';
+import MobileLanding, { MobileStickyBar } from '@/components/MobileLanding';
+import { CONTACT } from '@/lib/data';
 
 interface Props {
   params: Promise<{ lang: string }>;
@@ -15,12 +21,14 @@ interface Props {
 
 const meta = {
   en: {
-    title: 'Translation House – Professional Translation House Services in Tbilisi',
-    description: 'Fast, certified translations from Georgian to English, Polish, German, and 20+ languages. Same-day service available. Get a free quote in minutes.',
+    title: 'Translation House – Professional Sworn Translation Services',
+    description:
+      'Fast, certified translations to English, Polish, German, and 20+ languages. Same-day service available. Get a free quote in minutes.',
   },
   pl: {
-    title: 'Translation House – Profesjonalne usługi tłumaczenia notarialnego w Tbilisi',
-    description: 'Szybkie, certyfikowane tłumaczenia z języka gruzińskiego na angielski, polski, niemiecki i 20+ języków. Dostawa tego samego dnia. Bezpłatna wycena w kilka minut.',
+    title: 'Translation House – Profesjonalne tłumaczenia przysięgłe',
+    description:
+      'Szybkie, certyfikowane tłumaczenia na angielski, polski, niemiecki i 20+ języków. Dostawa tego samego dnia. Bezpłatna wycena w kilka minut.',
   },
 };
 
@@ -46,25 +54,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const faqItems = {
-  en: [
-    { q: 'How long does a Translation House translation take?', a: 'Standard translations are usually completed within 1–2 business days. Express same-day service is available for urgent documents.' },
-    { q: 'What documents can you translate?', a: 'We translate all official documents including passports, birth certificates, marriage certificates, diplomas, contracts, medical records, and court documents.' },
-    { q: 'What is the price per page?', a: 'Prices start from 50 zł (12 €) per page for English/Russian translations. Other languages — 99 zł (23 €) per page.' },
-    { q: 'Do you provide certified / notarized translations?', a: 'Yes. All our translations can be notarially certified, making them legally valid for official use in Georgia and internationally.' },
-    { q: 'Can I submit a document online?', a: 'Absolutely. Upload your document through our online form or send it via WhatsApp.' },
-    { q: 'Do you translate to languages other than Georgian?', a: 'Yes — we translate between 20+ language pairs including English, Polish, German, French, Turkish, Armenian, Arabic, Chinese, and many more.' },
-  ],
-  pl: [
-    { q: 'Jak długo trwa tłumaczenie notarialne?', a: 'Standardowe tłumaczenia są zazwyczaj gotowe w ciągu 1–2 dni roboczych. Dostępna jest usługa ekspresowa na ten sam dzień.' },
-    { q: 'Jakie dokumenty możecie przetłumaczyć?', a: 'Tłumaczymy wszystkie oficjalne dokumenty, w tym paszporty, akty urodzenia, akty małżeństwa, dyplomy, umowy, dokumentację medyczną i dokumenty sądowe.' },
-    { q: 'Jaka jest cena za stronę?', a: 'Ceny zaczynają się od 50 zł (12 €) za stronę dla tłumaczeń angielskiego/rosyjskiego. Inne języki — 99 zł (23 €) za stronę.' },
-    { q: 'Czy oferujecie certyfikowane tłumaczenia notarialne?', a: 'Tak. Wszystkie nasze tłumaczenia mogą być poświadczone notarialnie, co czyni je prawnie ważnymi.' },
-    { q: 'Czy mogę przesłać dokument online?', a: 'Oczywiście. Prześlij swój dokument przez nasz formularz online lub wyślij go przez WhatsApp.' },
-    { q: 'Czy tłumaczycie na języki inne niż gruziński?', a: 'Tak — pracujemy z ponad 20 parami językowymi, w tym angielskim, polskim, niemieckim, francuskim, tureckim i wieloma innymi.' },
-  ],
-};
-
 export default async function HomePage({ params }: Props) {
   const { lang: langParam } = await params;
   if (langParam !== 'en' && langParam !== 'pl') redirect('/en');
@@ -78,19 +67,35 @@ export default async function HomePage({ params }: Props) {
         name: 'Translation House',
         address: {
           '@type': 'PostalAddress',
-          streetAddress: '7 Kotne Dadiani St.',
-          addressLocality: 'Tbilisi',
-          addressCountry: 'GE',
+          streetAddress: 'Poznanska 37',
+          addressLocality: 'Warsaw',
+          postalCode: '00-687',
+          addressCountry: 'PL',
         },
-        telephone: '+995591729911',
-        email: 'info@th.com.ge',
+        telephone: CONTACT.phone1.tel,
+        email: CONTACT.email,
         url: 'https://notarytranslation.ge',
         openingHours: 'Mo-Su 00:00-24:00',
         priceRange: '$$',
       },
       {
+        '@type': 'Service',
+        name: lang === 'pl' ? 'Tłumaczenia przysięgłe' : 'Sworn Translation Services',
+        serviceType: 'Translation Service',
+        provider: {
+          '@type': 'LocalBusiness',
+          name: 'Translation House',
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: 'Warsaw',
+            addressCountry: 'PL',
+          },
+        },
+        areaServed: { '@type': 'City', name: 'Warsaw' },
+      },
+      {
         '@type': 'FAQPage',
-        mainEntity: faqItems[lang].map(({ q, a }) => ({
+        mainEntity: faqData[lang].items.map(({ q, a }) => ({
           '@type': 'Question',
           name: q,
           acceptedAnswer: { '@type': 'Answer', text: a },
@@ -105,15 +110,74 @@ export default async function HomePage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="bg-gradient-to-br from-primary-50 via-white to-secondary-50 pt-16 sm:pt-20">
-        <CTABanner lang={lang} />
-        <TrustStrip lang={lang} />
-        <TabbedCalculator lang={lang} />
-        <About lang={lang} />
-        <Prices lang={lang} />
-        <Testimonials lang={lang} />
-        <FAQ lang={lang} />
-      </div>
+
+      <main
+        id="main"
+        className="relative min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 pt-16 sm:pt-20 pb-28 md:pb-0"
+      >
+        {/* ── Mobile landing (< md) ── */}
+        <div className="md:hidden">
+          <MobileLanding lang={lang} />
+        </div>
+
+        {/* ── Desktop hero + trust strip (≥ md) ── */}
+        <div className="hidden md:block">
+          <AnimatedSection direction="down">
+            <div className="w-full">
+              <CTABanner lang={lang} />
+            </div>
+          </AnimatedSection>
+          <TrustStrip lang={lang} />
+        </div>
+
+        {/* Price Calculator & Upload Document */}
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8 md:py-10 lg:py-12">
+          <AnimatedSection direction="up" delay={0.2}>
+            <section id="calculator" className="mb-8 sm:mb-10 md:mb-12">
+              <TabbedCalculator lang={lang} />
+            </section>
+          </AnimatedSection>
+        </div>
+
+        {/* Testimonials */}
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pb-6 sm:pb-8 md:pb-10 lg:pb-12">
+          <AnimatedSection direction="scale" delay={0.3}>
+            <Testimonials lang={lang} />
+          </AnimatedSection>
+        </div>
+
+        {/* How It Works */}
+        <HowItWorks lang={lang} />
+
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8 md:py-10 lg:py-12">
+          {/* About Us */}
+          <AnimatedSection direction="left" delay={0.3}>
+            <div className="mb-8 sm:mb-10 md:mb-12">
+              <About lang={lang} />
+            </div>
+          </AnimatedSection>
+
+          {/* Prices */}
+          <AnimatedSection direction="right" delay={0.3}>
+            <div className="mb-8 sm:mb-10 md:mb-12">
+              <Prices lang={lang} />
+            </div>
+          </AnimatedSection>
+
+          {/* Blog */}
+          <AnimatedSection direction="up" delay={0.2}>
+            <BlogStrip lang={lang} />
+          </AnimatedSection>
+
+          {/* FAQ */}
+          <AnimatedSection direction="up" delay={0.2}>
+            <FAQ lang={lang} />
+          </AnimatedSection>
+        </div>
+      </main>
+
+      {/* Sticky WhatsApp + Call bar — mobile only */}
+      <MobileStickyBar lang={lang} />
     </>
   );
 }

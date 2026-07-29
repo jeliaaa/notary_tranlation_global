@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, type Variants } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 
 type Direction = 'up' | 'down' | 'left' | 'right' | 'scale';
 
@@ -10,49 +10,74 @@ interface Props {
   children: React.ReactNode;
   className?: string;
   id?: string;
+  once?: boolean;
+  onViewportEnter?: () => void;
 }
 
-const variants: Record<Direction, Variants> = {
-  up: {
-    hidden: { y: 40, opacity: 0 },
-    visible: { y: 0, opacity: 1 },
-  },
-  down: {
-    hidden: { y: -40, opacity: 0 },
-    visible: { y: 0, opacity: 1 },
-  },
-  left: {
-    hidden: { x: -40, opacity: 0 },
-    visible: { x: 0, opacity: 1 },
-  },
-  right: {
-    hidden: { x: 40, opacity: 0 },
-    visible: { x: 0, opacity: 1 },
-  },
-  scale: {
-    hidden: { scale: 0.9, opacity: 0 },
-    visible: { scale: 1, opacity: 1 },
-  },
+const transforms: Record<Direction, string> = {
+  up: 'translateY(32px)',
+  down: 'translateY(-32px)',
+  left: 'translateX(-32px)',
+  right: 'translateX(32px)',
+  scale: 'scale(0.9)',
 };
 
 export default function AnimatedSection({
   direction = 'up',
   delay = 0,
   children,
-  className,
+  className = '',
   id,
+  once = true,
+  onViewportEnter,
 }: Props) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  const firedRef = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    // IntersectionObserver never fires while the page isn't being rendered
+    // (background tab, prerender). Reveal straight away so content is never
+    // left permanently invisible.
+    if (document.hidden) setInView(true);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          if (!firedRef.current) {
+            firedRef.current = true;
+            onViewportEnter?.();
+          }
+          if (once) observer.disconnect();
+        } else if (!once) {
+          setInView(false);
+        }
+      },
+      { threshold: 0.1, rootMargin: '-100px 0px' }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [once]);
+
   return (
-    <motion.div
+    <div
+      ref={ref}
       id={id}
       className={className}
-      variants={variants[direction]}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay, ease: 'easeOut' }}
+      style={{
+        opacity: inView ? 1 : 0,
+        transform: inView ? 'none' : transforms[direction],
+        transition: `opacity 0.6s ease-out ${delay}s, transform 0.6s ease-out ${delay}s`,
+        willChange: inView ? 'auto' : 'opacity, transform',
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

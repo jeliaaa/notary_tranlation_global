@@ -1,200 +1,259 @@
 'use client';
 
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { Upload, Calculator, ShieldCheck, Clock, Zap } from 'lucide-react';
+import { Upload, Calculator, Clock, Zap, MessageCircle } from 'lucide-react';
 import type { Lang } from '@/lib/translations';
+import { waUrl } from '@/lib/data';
+import { useCurrency } from '@/lib/currency-context';
 
 interface Props {
   lang: Lang;
 }
 
-const content = {
-  en: {
-    heading: 'Professional Translation House Services',
-    subtitle: 'Fast, accurate, and certified translations for all your official documents. Trusted by thousands of clients in Warsaw.',
-    uploadBtn: 'Upload Document Now',
-    calcBtn: 'Calculate Price',
-    badges: [
-      { icon: ShieldCheck, label: 'Sworn Translations' },
-      { icon: Clock, label: '5-min Response' },
-      { icon: Zap, label: 'Same Day Delivery' },
+const translations = {
+  title: {
+    en: 'Sworn translation for official documents. Ready the same day.',
+    pl: 'Tłumaczenie przysięgłe dokumentów urzędowych. Gotowe tego samego dnia.',
+  },
+  subtitle: {
+    en: 'Certified sworn translations for passports, diplomas, and official documents. Trusted by 500+ clients.',
+    pl: 'Certyfikowane tłumaczenia przysięgłe paszportów, dyplomów i dokumentów urzędowych. Zaufało nam ponad 500 klientów.',
+  },
+  priceHintPrefix: {
+    en: 'Starting from',
+    pl: 'Już od',
+  },
+  priceHintSuffix: {
+    en: '/page',
+    pl: '/strona',
+  },
+  primaryCTA: {
+    en: 'Upload Document Now',
+    pl: 'Prześlij dokument teraz',
+  },
+  secondaryCTA: {
+    en: 'Calculate Price',
+    pl: 'Oblicz cenę',
+  },
+  whatsappCTA: {
+    en: 'Chat on WhatsApp',
+    pl: 'Napisz na WhatsApp',
+  },
+  certified: {
+    en: 'Sworn & Certified',
+    pl: 'Przysięgłe i poświadczone',
+  },
+  trustBadges: {
+    en: [
+      { label: 'Sworn Translations', icon: 'shield' },
+      { label: '5-min Response', icon: 'clock' },
+      { label: 'Same Day Delivery', icon: 'zap' },
+    ],
+    pl: [
+      { label: 'Tłumaczenia przysięgłe', icon: 'shield' },
+      { label: 'Odpowiedź w 5 minut', icon: 'clock' },
+      { label: 'Dostawa tego samego dnia', icon: 'zap' },
     ],
   },
-  pl: {
-    heading: 'Profesjonalne Usługi tłumaczenie przysięgłe',
-    subtitle: 'Szybkie, dokładne i certyfikowane tłumaczenia wszystkich oficjalnych dokumentów. Zaufało nam tysiące klientów w Warszawie.',
-    uploadBtn: 'Prześlij dokument teraz',
-    calcBtn: 'Oblicz cenę',
-    badges: [
-      { icon: ShieldCheck, label: 'Certyfikowane tłumaczenia' },
-      { icon: Clock, label: 'Odpowiedź w 5 minut' },
-      { icon: Zap, label: 'Dostawa tego samego dnia' },
-    ],
-  },
-};
+} as const;
 
-const scrollToSection = (id: string, delay = 0) => {
-  setTimeout(() => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY - 64;
-    window.scrollTo({ top, behavior: 'smooth' });
-  }, delay);
+const startingPrice = { PLN: 50, EUR: 12 } as const;
+
+const BadgeIcon = ({ type }: { type: string }) => {
+  if (type === 'clock') return <Clock className="w-4 h-4 text-primary-600" />;
+  return <Zap className="w-4 h-4 text-primary-600" />;
 };
 
 export default function CTABanner({ lang }: Props) {
-  const c = content[lang];
+  const { currency, formatPrice } = useCurrency();
 
-  const handleUpload = () => {
-    scrollToSection('calculator');
+  const scrollToCalculator = () => {
+    document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToUpload = () => {
+    document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
     setTimeout(() => {
-      const uploadTabBtn = document.getElementById('tab-upload');
-      if (uploadTabBtn) uploadTabBtn.click();
+      const uploadTabButton = document.querySelector<HTMLButtonElement>('[data-tab="upload"]');
+      if (uploadTabButton) uploadTabButton.click();
     }, 700);
   };
 
+  const badges = translations.trustBadges[lang] ?? translations.trustBadges.en;
+
   return (
-    <section
-      id="main"
-      className="relative bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-16 sm:py-20 lg:py-24 overflow-hidden"
-    >
+    <div className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-secondary-50">
+      {/* Subtle dot pattern */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 opacity-[0.04]"
         style={{
-          backgroundImage: 'radial-gradient(circle, #ec4899 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(circle at 2px 2px, #ec4899 1px, transparent 0)',
           backgroundSize: '36px 36px',
-          opacity: 0.04,
         }}
       />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6 }}
-              className="mb-6"
-            >
-              <Image src="/logo.svg" alt="Translation House" width={280} height={132} priority />
-            </motion.div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
-            <motion.h1
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.7 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6"
-            >
-              {c.heading}
-            </motion.h1>
+          {/* Left — Content */}
+          <div className="space-y-6 sm:space-y-8">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+              {translations.title[lang]}
+            </h1>
 
-            <motion.p
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.7, delay: 0.15 }}
-              className="text-lg sm:text-xl text-gray-600 leading-relaxed mb-8"
-            >
-              {c.subtitle}
-            </motion.p>
+            <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
+              {translations.subtitle[lang]}
+            </p>
 
-            <motion.div
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4 mb-8"
-            >
-              <button
-                onClick={handleUpload}
-                className="flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-6 py-3.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity shadow-lg shadow-primary-200"
-              >
-                <Upload className="w-5 h-5" />
-                {c.uploadBtn}
-              </button>
-              <button
-                onClick={() => scrollToSection('calculator')}
-                className="flex items-center justify-center gap-2 border-2 border-primary-300 text-primary-600 px-6 py-3.5 rounded-xl font-semibold text-sm hover:bg-primary-50 transition-colors"
-              >
-                <Calculator className="w-5 h-5" />
-                {c.calcBtn}
-              </button>
-            </motion.div>
+            <p className="text-lg sm:text-xl font-semibold text-primary-600">
+              {translations.priceHintPrefix[lang]} {formatPrice(startingPrice[currency])}
+              {translations.priceHintSuffix[lang]}
+            </p>
 
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.45 }}
-              className="flex flex-wrap gap-2"
-            >
-              {c.badges.map(({ icon: Icon, label }) => (
-                <span
-                  key={label}
-                  className="flex items-center gap-1.5 bg-white border border-gray-100 shadow-sm rounded-full px-3 py-1.5 text-sm text-gray-700"
+            <div className="space-y-5">
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <button
+                  onClick={scrollToUpload}
+                  className="px-6 py-3.5 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-xl font-semibold hover:from-primary-600 hover:to-secondary-600 transform hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-primary-200/50 text-sm sm:text-base flex items-center justify-center"
                 >
-                  <Icon className="w-4 h-4 text-primary-500" />
-                  {label}
-                </span>
-              ))}
-            </motion.div>
-          </div>
+                  <Upload className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
+                  {translations.primaryCTA[lang]}
+                </button>
 
-          {/* Right column — illustration */}
-          <div className="hidden lg:flex items-center justify-center">
-            <div className="relative w-96 h-96">
-              <motion.div
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-200 to-secondary-200 opacity-40"
-                animate={{ scale: [1, 1.05, 1], rotate: [0, 10, 0] }}
-                transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-              />
-              <motion.div
-                className="absolute top-8 left-8 w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 shadow-xl"
-                animate={{ y: [0, -12, 0], rotate: [0, 45, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-              />
-              <motion.div
-                className="absolute bottom-10 right-8 w-16 h-16 rounded-full bg-gradient-to-br from-secondary-400 to-secondary-600 shadow-xl"
-                animate={{ y: [0, 14, 0], x: [0, -8, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-              />
-              <motion.div
-                className="absolute top-1/2 right-4 w-12 h-12 rotate-45 bg-gradient-to-br from-primary-300 to-secondary-300 shadow-lg"
-                animate={{ rotate: [45, 90, 45] }}
-                transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-              />
-              <motion.div
-                className="absolute top-16 right-12 w-32 bg-white rounded-xl shadow-xl p-3 -rotate-6"
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+                <button
+                  onClick={scrollToCalculator}
+                  className="px-6 py-3.5 border-2 border-primary-300 text-primary-600 rounded-xl font-semibold hover:bg-primary-50 transition-all duration-300 text-sm sm:text-base flex items-center justify-center"
+                >
+                  <Calculator className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
+                  {translations.secondaryCTA[lang]}
+                </button>
+              </div>
+
+              {/* WhatsApp CTA */}
+              <a
+                id="wa-btn-cta"
+                href={waUrl(lang)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-medium text-green-600 hover:text-green-700 transition-colors"
               >
-                <div className="h-2 bg-gray-200 rounded mb-2 w-3/4" />
-                <div className="h-2 bg-gray-100 rounded mb-2" />
-                <div className="h-2 bg-gray-100 rounded w-5/6" />
-                <div className="h-2 bg-gray-100 rounded mt-2 w-2/3" />
-              </motion.div>
-              <motion.div
-                className="absolute bottom-20 left-10 w-28 bg-white rounded-xl shadow-xl p-3 rotate-6"
-                animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-              >
-                <div className="h-2 bg-primary-200 rounded mb-2 w-2/3" />
-                <div className="h-2 bg-gray-100 rounded mb-2" />
-                <div className="h-2 bg-gray-100 rounded w-4/5" />
-              </motion.div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-24 h-24 rounded-full bg-white shadow-2xl flex items-center justify-center">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-white" stroke="currentColor" strokeWidth={2}>
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="2" y1="12" x2="22" y2="12" />
-                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                    </svg>
+                <MessageCircle className="w-4 h-4" />
+                {translations.whatsappCTA[lang]}
+              </a>
+
+              {/* Trust Badges */}
+              <div className="flex flex-wrap gap-3">
+                {badges.map((badge, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-1.5 bg-white border border-gray-100 shadow-sm rounded-full px-3 py-1.5"
+                  >
+                    <BadgeIcon type={badge.icon} />
+                    <span className="text-xs sm:text-sm font-medium text-gray-700">
+                      {badge.label}
+                    </span>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
+
+          {/* Right — Document translation animation (desktop only) */}
+          <div
+            className="hidden lg:flex items-center justify-center relative h-96 lg:h-[500px]"
+            style={{ animation: 'nt-enter-right 0.8s ease-out 0.4s both' }}
+          >
+            {/* Outer glow ring */}
+            <div
+              className="absolute w-80 h-80 rounded-full"
+              style={{
+                background: 'radial-gradient(circle, rgba(236,72,153,0.08) 0%, transparent 70%)',
+                animation: 'nt-pulse-ring 5s ease-in-out infinite',
+              }}
+            />
+
+            {/* Source document — left, tilted */}
+            <div
+              className="absolute left-4 top-16 w-44 h-56 rounded-2xl bg-white shadow-xl border border-gray-100 p-4 flex flex-col gap-2"
+              style={{ animation: 'nt-float-l 6s ease-in-out infinite' }}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-6 h-4 rounded-sm bg-gradient-to-r from-blue-500 to-red-500 opacity-80" />
+                <div className="h-2 w-16 rounded-full bg-gray-200" />
+              </div>
+              <div className="h-2 w-full rounded-full bg-gray-100" />
+              <div className="h-2 w-5/6 rounded-full bg-gray-100" />
+              <div className="h-2 w-full rounded-full bg-gray-100" />
+              <div className="h-2 w-4/5 rounded-full bg-gray-100" />
+              <div className="h-2 w-full rounded-full bg-gray-100" />
+              <div className="h-2 w-3/4 rounded-full bg-gray-100" />
+              <div className="h-2 w-full rounded-full bg-gray-100" />
+              <div className="h-2 w-5/6 rounded-full bg-gray-100" />
+              <div className="mt-auto self-end w-10 h-10 rounded-full border-2 border-primary-300 flex items-center justify-center opacity-40">
+                <div className="w-6 h-6 rounded-full border border-primary-400" />
+              </div>
+            </div>
+
+            {/* Animated arrows in the center */}
+            <div
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10"
+              style={{ animation: 'nt-arrow 1.2s ease-in-out infinite' }}
+            >
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="w-4 h-4 border-r-2 border-b-2 border-primary-400 rotate-[-45deg]"
+                  style={{ animation: 'nt-fade-chevron 1.2s ease-in-out infinite', animationDelay: `${i * 0.2}s` }}
+                />
+              ))}
+            </div>
+
+            {/* Translated document — right, tilted other way */}
+            <div
+              className="absolute right-4 top-16 w-44 h-56 rounded-2xl bg-white shadow-xl border border-primary-100 p-4 flex flex-col gap-2"
+              style={{ animation: 'nt-float-r 6s ease-in-out infinite', animationDelay: '0.5s' }}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-6 h-4 rounded-sm bg-white border border-gray-200 flex items-center justify-center">
+                  <span style={{ fontSize: 8, lineHeight: 1 }}>🇵🇱</span>
+                </div>
+                <div className="h-2 w-16 rounded-full bg-primary-100" />
+              </div>
+              <div className="h-2 w-full rounded-full bg-primary-50" />
+              <div className="h-2 w-5/6 rounded-full bg-primary-50" />
+              <div className="h-2 w-full rounded-full bg-primary-50" />
+              <div className="h-2 w-4/5 rounded-full bg-primary-50" />
+              <div className="h-2 w-full rounded-full bg-primary-50" />
+              <div className="h-2 w-3/4 rounded-full bg-primary-50" />
+              <div className="h-2 w-full rounded-full bg-primary-50" />
+              <div className="h-2 w-5/6 rounded-full bg-primary-50" />
+              <div className="mt-auto self-end w-10 h-10 rounded-full border-2 border-primary-500 flex items-center justify-center bg-primary-50">
+                <div
+                  className="w-6 h-6 rounded-full bg-primary-400"
+                  style={{ animation: 'nt-stamp-pulse 2s ease-in-out infinite' }}
+                />
+              </div>
+            </div>
+
+            {/* Certified badge floating below */}
+            <div
+              className="absolute bottom-12 left-1/2 bg-white border border-green-200 shadow-lg rounded-full px-4 py-2 flex items-center gap-2 whitespace-nowrap"
+              style={{ animation: 'nt-bob 3s ease-in-out infinite', animationDelay: '1s' }}
+            >
+              <div
+                className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center"
+                style={{ animation: 'nt-badge-pulse 1.5s ease-in-out infinite' }}
+              >
+                <svg viewBox="0 0 12 12" width="10" height="10" fill="white">
+                  <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <span className="text-sm font-semibold text-gray-700">{translations.certified[lang]}</span>
+            </div>
+          </div>
+
         </div>
       </div>
-    </section>
+    </div>
   );
 }

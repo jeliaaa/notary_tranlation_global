@@ -5,6 +5,8 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import TawkToWidget from '@/components/TawkToWidget';
 import ScrollToTop from '@/components/ScrollToTop';
+import WhatsAppButton from '@/components/WhatsAppButton';
+import LeadCapturePopup from '@/components/LeadCapturePopup';
 import Script from 'next/script';
 import '../globals.css';
 
@@ -23,12 +25,27 @@ export default async function LangLayout({ children, params }: Props) {
 
   return (
     <html lang={lang} className="scroll-smooth">
-      <body className="flex flex-col min-h-screen overflow-x-hidden bg-white">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+        <meta name="theme-color" content="#ec4899" />
+      </head>
+      <body className={`overflow-x-hidden bg-white lang-${lang}`}>
         <CurrencyProvider>
           <ScrollToTop />
-          <Header lang={lang} />
-          <main className="flex-grow">{children}</main>
-          <Footer lang={lang} />
+          <div className="min-h-screen w-full relative overflow-x-hidden">
+            <div className="flex flex-col min-h-screen w-full">
+              <Header lang={lang} />
+              <main className="flex-grow">{children}</main>
+              <Footer lang={lang} />
+              <WhatsAppButton lang={lang} />
+              <LeadCapturePopup lang={lang} />
+            </div>
+          </div>
           <TawkToWidget />
         </CurrencyProvider>
         <Script
@@ -65,7 +82,7 @@ export default async function LangLayout({ children, params }: Props) {
         />
         <noscript>
           <div>
-            <img src="https://mc.yandex.ru/watch/109080508" style={{position:'absolute', left:'-9999px'}} alt="" />
+            <img src="https://mc.yandex.ru/watch/109080508" style={{ position: 'absolute', left: '-9999px' }} alt="" />
           </div>
         </noscript>
       </body>

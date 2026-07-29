@@ -1,12 +1,9 @@
 'use client';
 
-import { Info, Check } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Check, Info } from 'lucide-react';
 import type { Lang } from '@/lib/translations';
-import { getT } from '@/lib/translations';
 import { languageNames } from '@/lib/data';
 import { useCurrency } from '@/lib/currency-context';
-import AnimatedSection from './AnimatedSection';
 
 interface Props {
   lang: Lang;
@@ -18,20 +15,25 @@ const priceGroupDefs = [
   { tier: 'standard' as const, langs: ['azerbaijani'] },
   { tier: 'standard' as const, langs: ['german', 'french', 'italian', 'latvian'] },
   { tier: 'standard' as const, langs: ['slovak'] },
-  { tier: 'standard' as const, langs: ['spanish', 'portuguese', 'dutch', 'jewish'] },
+  { tier: 'standard' as const, langs: ['spanish', 'portuguese', 'dutch', 'hebrew'] },
   { tier: 'standard' as const, langs: ['arabic'] },
   { tier: 'standard' as const, langs: ['chinese'] },
   { tier: 'standard' as const, langs: ['japanese', 'korean'] },
 ];
 
-const headings = {
+const tierPrices = {
+  PLN: { cheap: 50, standard: 99 },
+  EUR: { cheap: 12, standard: 23 },
+};
+
+const content = {
   en: {
     title: 'Translation Prices',
     subtitle: 'Detailed information about our pricing',
     pricePerPage: 'Price per Page',
     languages: 'Languages',
     notaryTitle: 'Notary Approval Pricing',
-    discountTitle: 'Volume Discounts',
+    discountTitle: 'Discounts',
   },
   pl: {
     title: 'Ceny tłumaczeń',
@@ -39,7 +41,7 @@ const headings = {
     pricePerPage: 'Cena za stronę',
     languages: 'Języki',
     notaryTitle: 'Cennik poświadczenia notarialnego',
-    discountTitle: 'Rabaty za ilość',
+    discountTitle: 'Rabaty',
   },
 };
 
@@ -59,18 +61,12 @@ const discountLines = {
   pl: ['10% rabatu dla 50+ stron', '15% rabatu dla 100+ stron'],
 };
 
-const tierPrices = {
-  PLN: { cheap: 50, standard: 99 },
-  EUR: { cheap: 12, standard: 23 },
-};
-
 export default function Prices({ lang }: Props) {
-  const t = getT(lang);
-  const h = headings[lang];
+  const t = content[lang] ?? content.en;
   const names = languageNames[lang];
   const { currency, formatPrice } = useCurrency();
 
-  // Deduplicate groups by price (all "standard" languages collapse into one row)
+  // Group languages by price
   const grouped = new Map<number, string[]>();
   for (const g of priceGroupDefs) {
     const price = tierPrices[currency][g.tier];
@@ -78,83 +74,74 @@ export default function Prices({ lang }: Props) {
     existing.push(...g.langs);
     grouped.set(price, existing);
   }
-  const priceGroups = Array.from(grouped.entries()).map(([price, langs]) => ({ price, langs }));
+  const priceGroups = Array.from(grouped.entries()).sort(([a], [b]) => a - b);
 
   return (
-    <section id="prices" className="py-16 sm:py-20 bg-gradient-to-br from-primary-50 to-white">
+    <section id="prices" className="py-16 bg-gradient-to-br from-primary-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <AnimatedSection direction="up" className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">{h.title}</h2>
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">{t.title}</h2>
           <div className="w-16 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mx-auto mb-4" />
-          <p className="text-gray-500 text-lg">{h.subtitle}</p>
-        </AnimatedSection>
+          <p className="text-xl text-gray-600">{t.subtitle}</p>
+        </div>
 
-        <AnimatedSection direction="up" delay={0.1}>
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-primary-600 text-white">
-                    <th className="py-4 px-6 text-left text-sm font-semibold">{h.pricePerPage}</th>
-                    <th className="py-4 px-6 text-left text-sm font-semibold">{h.languages}</th>
+        {/* Main Pricing Table */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-12">
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead>
+                <tr className="bg-primary-600">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-white">{t.pricePerPage}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-white">{t.languages}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {priceGroups.map(([price, langs]) => (
+                  <tr key={price} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-lg font-semibold text-primary-600">{formatPrice(price)}</td>
+                    <td className="px-6 py-4 text-gray-700">
+                      {langs.map((l) => names[l as keyof typeof names]).join(', ')}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {priceGroups.map(({ price, langs }, idx) => (
-                    <motion.tr
-                      key={price}
-                      initial={{ x: -20, opacity: 0 }}
-                      whileInView={{ x: 0, opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: idx * 0.08 }}
-                      className={`border-b border-gray-50 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
-                    >
-                      <td className="py-3.5 px-6 text-lg font-semibold text-primary-600">{formatPrice(price)}</td>
-                      <td className="py-3.5 px-6 text-gray-700 text-sm">
-                        {langs.map((l) => names[l as keyof typeof names]).join(', ')}
-                      </td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </AnimatedSection>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* <AnimatedSection direction="left" delay={0.15}>
-            <div className="bg-white rounded-2xl shadow-lg p-6 h-full">
-              <div className="flex items-center gap-2 mb-4">
-                <Info className="w-5 h-5 text-primary-500" />
-                <h3 className="font-bold text-gray-900">{h.notaryTitle}</h3>
-              </div>
-              <ul className="space-y-2">
-                {notaryData[currency][lang].map((line) => (
-                  <li key={line} className="flex items-center gap-2 text-sm text-gray-700">
-                    <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
-                    {line}
-                  </li>
-                ))}
-              </ul>
+        {/* Additional Information Grid */}
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Notary Pricing */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+            <div className="flex items-center mb-4">
+              <Info className="w-6 h-6 text-primary-600 mr-2" />
+              <h3 className="text-xl font-semibold text-gray-900">{t.notaryTitle}</h3>
             </div>
-          </AnimatedSection> */}
+            <ul className="space-y-3">
+              {notaryData[currency][lang].map((line) => (
+                <li key={line} className="flex items-center">
+                  <Check className="w-5 h-5 text-green-500 mr-2" />
+                  <span className="text-gray-600">{line}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          <AnimatedSection direction="right" delay={0.15}>
-            <div className="bg-white rounded-2xl shadow-lg p-6 h-full">
-              <div className="flex items-center gap-2 mb-4">
-                <Info className="w-5 h-5 text-secondary-500" />
-                <h3 className="font-bold text-gray-900">{h.discountTitle}</h3>
-              </div>
-              <ul className="space-y-2">
-                {discountLines[lang].map((line) => (
-                  <li key={line} className="flex items-center gap-2 text-sm text-gray-700">
-                    <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
-                    {line}
-                  </li>
-                ))}
-              </ul>
+          {/* Discounts */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+            <div className="flex items-center mb-4">
+              <Info className="w-6 h-6 text-primary-600 mr-2" />
+              <h3 className="text-xl font-semibold text-gray-900">{t.discountTitle}</h3>
             </div>
-          </AnimatedSection>
+            <ul className="space-y-3">
+              {discountLines[lang].map((line) => (
+                <li key={line} className="flex items-center">
+                  <Check className="w-5 h-5 text-green-500 mr-2" />
+                  <span className="text-gray-600">{line}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </section>

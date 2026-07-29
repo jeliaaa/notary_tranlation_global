@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Calculator, Upload } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import type { Lang } from '@/lib/translations';
 import PriceCalculator from './PriceCalculator';
 import FileUploadForm from './FileUploadForm';
@@ -11,83 +10,116 @@ interface Props {
   lang: Lang;
 }
 
-const tabContent = {
-  en: {
-    tab1: 'Price Calculator',
-    tab2: 'Upload Document',
-    title1: 'Estimate Translation Cost Instantly',
-    title2: 'Send Us Your Document For Free Quote',
-    subtitle2: 'Quick response ~ 5 minutes',
+const tabTranslations = {
+  calculator: {
+    en: 'Price Calculator',
+    pl: 'Kalkulator cen',
   },
-  pl: {
-    tab1: 'Kalkulator cen',
-    tab2: 'Prześlij dokument',
-    title1: 'Natychmiastowa wycena tłumaczenia',
-    title2: 'Wyślij dokument po bezpłatną wycenę',
-    subtitle2: 'Szybka odpowiedź ~ 5 minut',
+  upload: {
+    en: 'Upload Document',
+    pl: 'Prześlij dokument',
   },
-};
+  uploadTitle: {
+    en: 'Send Us Your Document For Free Quote',
+    pl: 'Wyślij dokument po bezpłatną wycenę',
+  },
+  uploadSubtitle: {
+    en: 'Quick response ~ 5 minutes',
+    pl: 'Szybka odpowiedź ~ 5 minut',
+  },
+  calculatorTitle: {
+    en: 'Estimate Translation Cost Instantly',
+    pl: 'Natychmiastowa wycena tłumaczenia',
+  },
+} as const;
 
 export default function TabbedCalculator({ lang }: Props) {
-  const [activeTab, setActiveTab] = useState<0 | 1>(0);
-  const c = tabContent[lang];
+  const [activeTab, setActiveTab] = useState<'calculator' | 'upload'>('calculator');
 
   return (
-    <section id="calculator" className="py-16 sm:py-20 bg-white">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative bg-white rounded-2xl shadow-xl border border-primary-100 overflow-hidden">
-          <div className="absolute -top-8 -left-8 w-40 h-40 bg-primary-100 rounded-full blur-3xl opacity-60 pointer-events-none" />
-          <div className="absolute -bottom-8 -right-8 w-40 h-40 bg-secondary-100 rounded-full blur-3xl opacity-60 pointer-events-none" />
+    <div
+      className="bg-white rounded-2xl shadow-xl border border-primary-100 overflow-hidden relative"
+      id="calculator-tabs"
+    >
+      {/* Spotlight Effect */}
+      <div className="absolute -top-20 -left-20 w-40 h-40 bg-primary-100 rounded-full opacity-30 blur-3xl" />
+      <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-secondary-100 rounded-full opacity-30 blur-3xl" />
 
-          <div className="relative flex bg-gradient-to-r from-primary-50 to-secondary-50 border-b border-primary-100">
-            {[c.tab1, c.tab2].map((tab, i) => {
-              const Icon = i === 0 ? Calculator : Upload;
-              return (
-                <button
-                  key={tab}
-                  id={i === 1 ? 'tab-upload' : undefined}
-                  onClick={() => setActiveTab(i as 0 | 1)}
-                  className={`flex-1 flex items-center justify-center gap-2 py-4 text-sm font-semibold transition-colors ${
-                    activeTab === i
-                      ? 'border-b-[3px] border-primary-500 text-primary-600 bg-white'
-                      : 'text-gray-500 hover:text-primary-600'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {tab}
-                </button>
-              );
-            })}
+      {/* Tab Headers */}
+      <div className="flex border-b border-gray-200 bg-gradient-to-r from-primary-50 to-secondary-50">
+        <button
+          onClick={() => setActiveTab('calculator')}
+          data-tab="calculator"
+          className={`flex-1 px-3 sm:px-4 md:px-6 py-3 sm:py-4 font-medium sm:font-semibold text-sm sm:text-base md:text-lg transition-all duration-300 ${
+            activeTab === 'calculator'
+              ? 'border-b-3 border-primary-500 text-primary-600 bg-white'
+              : 'text-gray-500 hover:text-primary-600 hover:bg-white/50'
+          }`}
+        >
+          <div className="flex items-center justify-center space-x-1 sm:space-x-2">
+            <Calculator className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span>{tabTranslations.calculator[lang]}</span>
           </div>
+        </button>
 
-          <div className="relative p-6 sm:p-8">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ x: activeTab === 0 ? -20 : 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: activeTab === 0 ? 20 : -20, opacity: 0 }}
-                transition={{ duration: 0.22 }}
-              >
-                {activeTab === 0 ? (
-                  <>
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">{c.title1}</h2>
-                    <PriceCalculator lang={lang} />
-                  </>
-                ) : (
-                  <>
-                    <div className="mb-6">
-                      <h2 className="text-xl font-bold text-gray-900">{c.title2}</h2>
-                      <p className="text-sm text-gray-500 mt-1">{c.subtitle2}</p>
-                    </div>
-                    <FileUploadForm lang={lang} />
-                  </>
-                )}
-              </motion.div>
-            </AnimatePresence>
+        <button
+          onClick={() => setActiveTab('upload')}
+          data-tab="upload"
+          id="tab-upload"
+          className={`flex-1 px-3 sm:px-4 md:px-6 py-3 sm:py-4 font-medium sm:font-semibold text-sm sm:text-base md:text-lg transition-all duration-300 ${
+            activeTab === 'upload'
+              ? 'border-b-3 border-primary-500 text-primary-600 bg-white'
+              : 'text-gray-500 hover:text-primary-600 hover:bg-white/50'
+          }`}
+        >
+          <div className="flex items-center justify-center space-x-1 sm:space-x-2">
+            <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span>{tabTranslations.upload[lang]}</span>
           </div>
-        </div>
+        </button>
       </div>
-    </section>
+
+      {/* Tab Content */}
+      <div className="p-4 sm:p-6 md:p-8 relative z-10">
+        {activeTab === 'calculator' && (
+          <div key="calculator" className="nt-tab-in">
+            <div className="text-center mb-5">
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary-600 mb-2">
+                {tabTranslations.calculatorTitle[lang]}
+              </h3>
+            </div>
+            <PriceCalculator lang={lang} />
+          </div>
+        )}
+
+        {activeTab === 'upload' && (
+          <div key="upload" className="nt-tab-in">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="text-center">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary-600 mb-2">
+                  {tabTranslations.uploadTitle[lang]}
+                </h3>
+                <p className="text-sm sm:text-base text-primary-600 font-medium flex items-center justify-center">
+                  <span className="inline-block mr-2">⚡</span>
+                  {tabTranslations.uploadSubtitle[lang]}
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-br from-primary-50 to-secondary-50 rounded-xl p-3 sm:p-4 md:p-6 border border-primary-100">
+                <FileUploadForm lang={lang} />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Decorative Elements */}
+      <div className="hidden md:block absolute top-0 right-0 w-32 h-32 overflow-hidden pointer-events-none">
+        <div className="absolute -top-8 -right-8 w-16 h-16 bg-gradient-to-br from-primary-200 to-secondary-200 rounded-full opacity-50" />
+      </div>
+      <div className="hidden md:block absolute bottom-0 left-0 w-24 h-24 overflow-hidden pointer-events-none">
+        <div className="absolute -bottom-6 -left-6 w-12 h-12 bg-gradient-to-tr from-secondary-200 to-primary-200 rounded-full opacity-40" />
+      </div>
+    </div>
   );
 }

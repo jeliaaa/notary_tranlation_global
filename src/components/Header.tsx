@@ -1,223 +1,3 @@
-// 'use client';
-
-// import { useState, useEffect, useCallback } from 'react';
-// import { useRouter, usePathname } from 'next/navigation';
-// import Image from 'next/image';
-// import { Menu, X, Phone, ChevronDown } from 'lucide-react';
-// import type { Lang } from '@/lib/translations';
-// import { getT } from '@/lib/translations';
-// import { CONTACT } from '@/lib/data';
-// import { motion, AnimatePresence } from 'framer-motion';
-
-// interface Props {
-//   lang: Lang;
-// }
-
-// const scrollToSection = (id: string) => {
-//   const el = document.getElementById(id);
-//   if (!el) return;
-//   const offset = 64;
-//   const top = el.getBoundingClientRect().top + window.scrollY - offset;
-//   window.scrollTo({ top, behavior: 'smooth' });
-// };
-
-// export default function Header({ lang }: Props) {
-//   const t = getT(lang);
-//   const router = useRouter();
-//   const pathname = usePathname();
-//   const [scrolled, setScrolled] = useState(false);
-//   const [menuOpen, setMenuOpen] = useState(false);
-
-//   useEffect(() => {
-//     const onScroll = () => setScrolled(window.scrollY > 10);
-//     window.addEventListener('scroll', onScroll, { passive: true });
-//     return () => window.removeEventListener('scroll', onScroll);
-//   }, []);
-
-//   useEffect(() => {
-//     const onResize = () => {
-//       if (window.innerWidth >= 768) setMenuOpen(false);
-//     };
-//     window.addEventListener('resize', onResize);
-//     return () => window.removeEventListener('resize', onResize);
-//   }, []);
-
-//   const isHome = pathname === `/${lang}` || pathname === `/${lang}/`;
-
-//   const handleNavClick = useCallback(
-//     (sectionId: string) => {
-//       setMenuOpen(false);
-//       if (isHome) {
-//         scrollToSection(sectionId);
-//       } else {
-//         router.push(`/${lang}`);
-//         setTimeout(() => scrollToSection(sectionId), 200);
-//       }
-//     },
-//     [isHome, lang, router]
-//   );
-
-//   const handleLogoClick = () => {
-//     if (isHome) scrollToSection('main');
-//     else router.push(`/${lang}`);
-//   };
-
-//   const handleLangChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-//     const newLang = e.target.value as Lang;
-//     try {
-//       localStorage.setItem('preferredLanguage', newLang);
-//     } catch {}
-//     const newPath = pathname.replace(/^\/(en|pl)/, `/${newLang}`);
-//     router.replace(newPath);
-//   };
-
-//   const handlePhoneClick = () => {
-//     if (window.innerWidth >= 768) {
-//       navigator.clipboard.writeText(CONTACT.phone1.short).catch(() => {});
-//       alert('Number copied');
-//     } else {
-//       window.location.href = `tel:${CONTACT.phone1.short}`;
-//     }
-//   };
-
-//   const navItems = [
-//     { label: t.home, section: 'main' },
-//     { label: t.about, section: 'about' },
-//     { label: t.prices, section: 'prices' },
-//     { label: t.testimonials, section: 'testimonials' },
-//   ];
-
-//   return (
-//     <header
-//       className={`fixed w-full top-0 z-40 transition-all duration-300 ${
-//         scrolled
-//           ? 'bg-white/95 backdrop-blur-sm shadow-md'
-//           : 'bg-white shadow-sm'
-//       }`}
-//     >
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//         <div className="flex items-center justify-between h-16">
-//           {/* Logo */}
-//           <button
-//             onClick={handleLogoClick}
-//             className="flex items-center hover:opacity-80 transition-opacity"
-//           >
-//             <Image src="/logo.svg" alt="Translation House" width={160} height={75} priority />
-//           </button>
-
-//           {/* Desktop Nav */}
-//           <nav className="hidden md:flex items-center gap-6">
-//             {navItems.map((item) => (
-//               <button
-//                 key={item.section}
-//                 onClick={() => handleNavClick(item.section)}
-//                 className="text-gray-600 hover:text-gray-900 text-sm font-medium hover:underline underline-offset-4 transition-colors"
-//               >
-//                 {item.label}
-//               </button>
-//             ))}
-//             <button
-//               onClick={() => router.push(`/${lang}/blog`)}
-//               className="text-gray-600 hover:text-gray-900 text-sm font-medium hover:underline underline-offset-4 transition-colors"
-//             >
-//               {t.blog}
-//             </button>
-//           </nav>
-
-//           {/* Right side */}
-//           <div className="flex items-center gap-3">
-//             {/* Phone button desktop */}
-//             <button
-//               onClick={handlePhoneClick}
-//               className="hidden md:flex items-center gap-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
-//             >
-//               <Phone className="w-4 h-4" />
-//               {CONTACT.phone1.short}
-//             </button>
-
-//             {/* Language selector */}
-//             <div className="relative">
-//               <select
-//                 value={lang}
-//                 onChange={handleLangChange}
-//                 className="appearance-none bg-primary-600 text-white text-sm font-semibold px-3 py-1.5 pr-7 rounded-lg border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-400"
-//                 style={{ backgroundImage: 'none' }}
-//               >
-//                 <option value="en">EN</option>
-//                 <option value="pl">PL</option>
-//               </select>
-//               <ChevronDown className="w-3.5 h-3.5 text-white absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-//             </div>
-
-//             {/* Hamburger */}
-//             <button
-//               onClick={() => setMenuOpen((v) => !v)}
-//               className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-//               aria-label="Toggle menu"
-//             >
-//               {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Mobile phone banner (shown when menu is closed) */}
-//       {!menuOpen && (
-//         <div className="md:hidden">
-//           <a
-//             href={`tel:${CONTACT.phone1.short}`}
-//             className="flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-sm py-2 font-medium"
-//           >
-//             <Phone className="w-4 h-4" />
-//             {CONTACT.phone1.display}
-//           </a>
-//         </div>
-//       )}
-
-//       {/* Mobile Menu */}
-//       <AnimatePresence>
-//         {menuOpen && (
-//           <motion.div
-//             initial={{ height: 0, opacity: 0 }}
-//             animate={{ height: 'auto', opacity: 1 }}
-//             exit={{ height: 0, opacity: 0 }}
-//             transition={{ duration: 0.25 }}
-//             className="md:hidden overflow-hidden bg-white border-t border-gray-100 shadow-lg"
-//           >
-//             <div className="px-4 py-3 flex flex-col gap-1">
-//               {navItems.map((item) => (
-//                 <button
-//                   key={item.section}
-//                   onClick={() => handleNavClick(item.section)}
-//                   className="text-left text-gray-700 hover:text-primary-600 py-2.5 px-3 rounded-lg hover:bg-primary-50 text-sm font-medium transition-colors"
-//                 >
-//                   {item.label}
-//                 </button>
-//               ))}
-//               <button
-//                 onClick={() => {
-//                   setMenuOpen(false);
-//                   router.push(`/${lang}/blog`);
-//                 }}
-//                 className="text-left text-gray-700 hover:text-primary-600 py-2.5 px-3 rounded-lg hover:bg-primary-50 text-sm font-medium transition-colors"
-//               >
-//                 {t.blog}
-//               </button>
-//               <a
-//                 href={`tel:${CONTACT.phone1.short}`}
-//                 className="flex items-center gap-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-2.5 px-3 rounded-lg text-sm font-medium mt-1"
-//               >
-//                 <Phone className="w-4 h-4" />
-//                 {CONTACT.phone1.display}
-//               </a>
-//             </div>
-//           </motion.div>
-//         )}
-//       </AnimatePresence>
-//     </header>
-//   );
-// }
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -226,19 +6,19 @@ import Image from 'next/image';
 import { Menu, X, ChevronDown, MessageCircle } from 'lucide-react';
 import type { Lang } from '@/lib/translations';
 import { getT } from '@/lib/translations';
-import { CONTACT } from '@/lib/data';
+import { waUrl } from '@/lib/data';
 import { useCurrency, type Currency } from '@/lib/currency-context';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
   lang: Lang;
 }
 
+const HEADER_OFFSET = 64;
+
 const scrollToSection = (id: string) => {
   const el = document.getElementById(id);
   if (!el) return;
-  const offset = 64;
-  const top = el.getBoundingClientRect().top + window.scrollY - offset;
+  const top = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
   window.scrollTo({ top, behavior: 'smooth' });
 };
 
@@ -247,16 +27,18 @@ export default function Header({ lang }: Props) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { currency, setCurrency } = useCurrency();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Close menu when screen size changes from mobile to desktop
   useEffect(() => {
     const onResize = () => {
       if (window.innerWidth >= 768) setMenuOpen(false);
@@ -265,25 +47,42 @@ export default function Header({ lang }: Props) {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  // Deferred scroll target set by other pages (e.g. the footer links)
+  useEffect(() => {
+    const target = sessionStorage.getItem('scrollTarget');
+    if (!target) return;
+    sessionStorage.removeItem('scrollTarget');
+    const attempt = (tries: number) => {
+      const el = document.getElementById(target);
+      if (el) {
+        scrollToSection(target);
+      } else if (tries > 0) {
+        setTimeout(() => attempt(tries - 1), 150);
+      }
+    };
+    setTimeout(() => attempt(10), 100);
+  }, [pathname]);
+
   const isHome = pathname === `/${lang}` || pathname === `/${lang}/`;
 
   const handleNavClick = useCallback(
-    (sectionId: string) => {
+    (item: { section?: string; isBlog?: boolean }) => {
       setMenuOpen(false);
-      if (isHome) {
-        scrollToSection(sectionId);
-      } else {
+
+      if (item.isBlog) {
+        router.push(`/${lang}/blog`);
+        return;
+      }
+
+      if (!isHome) {
+        sessionStorage.setItem('scrollTarget', item.section!);
         router.push(`/${lang}`);
-        setTimeout(() => scrollToSection(sectionId), 200);
+      } else {
+        document.getElementById(item.section!)?.scrollIntoView({ behavior: 'smooth' });
       }
     },
     [isHome, lang, router]
   );
-
-  const handleLogoClick = () => {
-    if (isHome) scrollToSection('main');
-    else router.push(`/${lang}`);
-  };
 
   const handleLangChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLang = e.target.value as Lang;
@@ -294,34 +93,26 @@ export default function Header({ lang }: Props) {
     router.replace(newPath);
   };
 
-  // ✅ Proper WhatsApp link
-  const getWhatsAppLink = () => {
-    const phone = CONTACT.phone1.short.replace(/\D/g, '');
-    const message = encodeURIComponent('Hello, I would like to get more information.');
-    return `https://wa.me/${phone}?text=${message}`;
-  };
-
-  const navItems = [
-    { label: t.home, section: 'main' },
-    { label: t.about, section: 'about' },
-    { label: t.prices, section: 'prices' },
-    { label: t.testimonials, section: 'testimonials' },
+  const navigationItems: { key: keyof typeof t; section?: string; isBlog?: boolean }[] = [
+    { key: 'home', section: 'main' },
+    { key: 'about', section: 'about' },
+    { key: 'prices', section: 'prices' },
+    { key: 'testimonials', section: 'testimonials' },
+    { key: 'blog', isBlog: true },
   ];
 
   return (
     <header
-      className={`fixed w-full top-0 z-40 transition-all duration-300 ${
-        scrolled
-          ? 'bg-white/95 backdrop-blur-sm shadow-md'
-          : 'bg-white shadow-sm'
+      className={`fixed w-full top-0 z-40 overflow-x-hidden transition-all duration-300 ${
+        scrolled ? 'bg-white/95 backdrop-blur-sm shadow-md' : 'bg-white shadow-sm'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between px-2 py-2 sm:px-4 sm:py-3 lg:px-8">
           {/* Logo */}
           <button
-            onClick={handleLogoClick}
-            className="flex items-center hover:opacity-80 transition-opacity"
+            onClick={() => handleNavClick({ section: 'main' })}
+            className="flex items-center hover:opacity-80 transition-opacity flex-shrink-0"
           >
             <Image
               src="/logo.svg"
@@ -329,54 +120,51 @@ export default function Header({ lang }: Props) {
               width={160}
               height={75}
               priority
+              className="h-8 sm:h-10 w-auto"
             />
           </button>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            {navItems.map((item) => (
-              <button
-                key={item.section}
-                onClick={() => handleNavClick(item.section)}
-                className="text-gray-600 hover:text-gray-900 text-sm font-medium hover:underline underline-offset-4 transition-colors"
-              >
-                {item.label}
-              </button>
-            ))}
-            <button
-              onClick={() => router.push(`/${lang}/blog`)}
-              className="text-gray-600 hover:text-gray-900 text-sm font-medium hover:underline underline-offset-4 transition-colors"
-            >
-              {t.blog}
-            </button>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center">
+            <div className="flex flex-wrap justify-center space-x-2 lg:space-x-4">
+              {navigationItems.map((item) => (
+                <button
+                  key={item.key}
+                  onClick={() => handleNavClick(item)}
+                  className="text-gray-600 hover:text-gray-900 transition-colors text-xs lg:text-sm px-1.5 py-1"
+                >
+                  {t[item.key]}
+                </button>
+              ))}
+            </div>
           </nav>
 
-          {/* Right side */}
-          <div className="flex items-center gap-3">
-            {/* WhatsApp Desktop */}
+          {/* Right side items */}
+          <div className="flex items-center space-x-1 sm:space-x-3">
             <a
-              href={getWhatsAppLink()}
+              href={waUrl(lang)}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:flex items-center gap-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
+              className="hidden md:flex items-center px-2 py-1.5 sm:px-3 sm:py-2 text-white bg-gradient-to-r from-primary-500 to-secondary-500
+                         rounded-md hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 text-xs lg:text-sm"
             >
-              <MessageCircle className="w-4 h-4" />
+              <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-1.5" />
               WhatsApp
             </a>
 
             {/* Currency toggle */}
-            <div className="flex bg-gray-100 rounded-lg p-0.5">
+            <div className="flex bg-gray-100 rounded-md p-0.5">
               {(['PLN', 'EUR'] as Currency[]).map((c) => (
                 <button
                   key={c}
                   onClick={() => setCurrency(c)}
-                  className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors ${
+                  className={`px-2 py-1 text-[11px] sm:text-xs font-semibold rounded transition-colors ${
                     currency === c
                       ? 'bg-primary-600 text-white shadow-sm'
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  {c === 'PLN' ? 'PLN' : 'EUR'}
+                  {c}
                 </button>
               ))}
             </div>
@@ -386,91 +174,77 @@ export default function Header({ lang }: Props) {
               <select
                 value={lang}
                 onChange={handleLangChange}
-                className="appearance-none bg-primary-600 text-white text-sm font-semibold px-3 py-1.5 pr-7 rounded-lg border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-400"
                 style={{ backgroundImage: 'none' }}
+                className="appearance-none bg-primary-600 text-white px-2 py-1.5 sm:px-3 sm:py-2 pr-6 sm:pr-8 rounded-md cursor-pointer hover:bg-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 text-xs sm:text-sm"
               >
                 <option value="en">EN</option>
                 <option value="pl">PL</option>
               </select>
-              <ChevronDown className="w-3.5 h-3.5 text-white absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <ChevronDown className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 text-white pointer-events-none" />
             </div>
 
             {/* Hamburger */}
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+              className="md:hidden p-1 sm:p-1.5 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               aria-label="Toggle menu"
             >
               {menuOpen ? (
-                <X className="w-5 h-5" />
+                <X className="h-5 w-5 sm:h-6 sm:w-6" />
               ) : (
-                <Menu className="w-5 h-5" />
+                <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
               )}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile WhatsApp banner */}
-      {!menuOpen && (
-        <div className="md:hidden">
+      {/* Mobile Menu */}
+      <div
+        className="md:hidden bg-white border-t border-gray-200 shadow-lg max-w-full"
+        style={{
+          overflow: 'hidden',
+          maxHeight: menuOpen ? '400px' : 0,
+          opacity: menuOpen ? 1 : 0,
+          transition: 'max-height 0.2s ease, opacity 0.2s ease',
+        }}
+      >
+        <div className="px-3 pt-2 pb-3 space-y-1 overflow-x-hidden">
+          {navigationItems.map((item) => (
+            <button
+              key={item.key}
+              onClick={() => handleNavClick(item)}
+              className="block w-full text-left px-2 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+            >
+              {t[item.key]}
+            </button>
+          ))}
           <a
-            href={getWhatsAppLink()}
+            href={waUrl(lang)}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-sm py-2 font-medium"
+            className="flex w-full items-center px-2 py-2 rounded-md text-sm font-medium text-primary-600 hover:text-primary-800 hover:bg-gray-50"
           >
-            <MessageCircle className="w-4 h-4" />
-            Chat on WhatsApp
+            <MessageCircle className="h-4 w-4 mr-2" />
+            WhatsApp
+          </a>
+        </div>
+      </div>
+
+      {/* Mobile WhatsApp banner */}
+      {!menuOpen && (
+        <div className="md:hidden bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-center py-1">
+          <a
+            href={waUrl(lang)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center text-xs"
+          >
+            <MessageCircle className="h-3 w-3 mr-1" />
+            <span>{t.contactViaWhatsApp}</span>
           </a>
         </div>
       )}
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="md:hidden overflow-hidden bg-white border-t border-gray-100 shadow-lg"
-          >
-            <div className="px-4 py-3 flex flex-col gap-1">
-              {navItems.map((item) => (
-                <button
-                  key={item.section}
-                  onClick={() => handleNavClick(item.section)}
-                  className="text-left text-gray-700 hover:text-primary-600 py-2.5 px-3 rounded-lg hover:bg-primary-50 text-sm font-medium transition-colors"
-                >
-                  {item.label}
-                </button>
-              ))}
-
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  router.push(`/${lang}/blog`);
-                }}
-                className="text-left text-gray-700 hover:text-primary-600 py-2.5 px-3 rounded-lg hover:bg-primary-50 text-sm font-medium transition-colors"
-              >
-                {t.blog}
-              </button>
-
-              {/* WhatsApp Mobile */}
-              <a
-                href={getWhatsAppLink()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-2.5 px-3 rounded-lg text-sm font-medium mt-1"
-              >
-                <MessageCircle className="w-4 h-4" />
-                WhatsApp
-              </a>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </header>
   );
 }

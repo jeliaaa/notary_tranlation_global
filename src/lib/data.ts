@@ -83,3 +83,18 @@ export const CONTACT = {
     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2443.8047905447916!2d21.0097512!3d52.228764299999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471eccf2ef9c1663%3A0x1dcc975c6cfe6e2a!2sPozna%C5%84ska%2037%2C%2000-689%20Warszawa%2C%20Poland!5e0!3m2!1sen!2sge!4v1776264739394!5m2!1sen!2sge',
 };
 
+/** Digits-only WhatsApp number, ready for a wa.me link. */
+export const WHATSAPP_NUMBER = CONTACT.whatsapp.replace(/\D/g, '');
+
+export const WA_MESSAGES: Record<Lang, string> = {
+  en: 'Hello, I would like to get a price quote and deadlines.',
+  pl: 'Dzień dobry, chciałbym poznać cenę i terminy realizacji.',
+};
+
+export function waUrl(lang: Lang, message?: string): string {
+  const text = message ?? WA_MESSAGES[lang] ?? WA_MESSAGES.en;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+}
+
+export const PHONE_URL = `tel:${CONTACT.phone1.tel}`;
+

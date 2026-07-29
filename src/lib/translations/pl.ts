@@ -1,14 +1,17 @@
 export const pl = {
+  // Header
   home: 'Strona główna',
   about: 'O nas',
   prices: 'Ceny',
   testimonials: 'Opinie',
-  blog: 'Blog',
-  readMore: 'Czytaj więcej',
-  readingTime: 'min czytania',
-  ourLocation: 'Nasza lokalizacja',
-  openInGoogleMaps: 'Otwórz w Google Maps',
+
+  // Main section
   mainTitle: 'Profesjonalne usługi tłumaczeniowe',
+  emailInstruction: 'Wyślij nam dokument na adres',
+  receiveTranslation: 'i odbierz tłumaczenie w ciągu',
+  minutes: 'minut',
+
+  // Price Calculator
   sourceLanguage: 'Język źródłowy',
   targetLanguage: 'Język docelowy',
   pageCount: 'Liczba stron',
@@ -23,13 +26,38 @@ export const pl = {
   estimatedDeliveryTime: 'Szacowany czas dostawy',
   copyEmail: 'Kopiuj email',
   copyPhone: 'Kopiuj numer telefonu',
+  contactWhatsApp: 'Napisz na WhatsApp',
+  uploadDocument: 'Prześlij dokument',
+  getQuoteNow: 'Otrzymaj bezpłatną wycenę',
+  calculatePrice: 'Oblicz cenę',
+  responseWithin: 'Odpowiedź w ciągu 5 minut',
+  freePriceEstimate: 'Bezpłatna wycena',
+
+  // About section
   aboutTitle: 'O nas',
+  companyInfo: 'Informacje o firmie',
   detailedInfo: 'Szczegółowe informacje o naszych usługach',
   foundationYear: 'Rok założenia',
   translatorCount: 'Liczba tłumaczy',
   languages: 'Języki',
   specialization: 'Specjalizacja',
   specializationDetails: 'Tłumaczenia prawne, techniczne, medyczne i literackie',
+
+  // Prices section
+  pricesTitle: 'Ceny i zasady',
+  pricingPolicy: 'Polityka cenowa',
+  pricingDetails: 'Szczegółowe informacje o naszych cenach',
+  standardPrice: 'Cena standardowa',
+  rareLanguages: 'Języki rzadkie',
+  notaryApprovalPrices: 'Poświadczenie notarialne',
+  discounts: 'Rabaty',
+
+  // Testimonials section
+  testimonialsTitle: 'Opinie klientów',
+  happyClients: 'Opinie zadowolonych klientów',
+  clientOpinions: 'Co mówią o nas nasi klienci',
+
+  // Footer
   company: 'Firma',
   contact: 'Kontakt',
   services: 'Usługi',
@@ -41,4 +69,13 @@ export const pl = {
   privacy: 'Polityka prywatności',
   terms: 'Regulamin',
   contactViaWhatsApp: 'Skontaktuj się przez WhatsApp',
+
+  // Blog
+  blog: 'Blog',
+  readMore: 'Czytaj więcej',
+  readingTime: 'min czytania',
+
+  // Map
+  ourLocation: 'Nasza lokalizacja',
+  openInGoogleMaps: 'Otwórz w Google Maps',
 };

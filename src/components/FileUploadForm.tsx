@@ -1,234 +1,283 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Upload, FileText, X, Check } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { getT, type Lang } from '@/lib/translations';
-import { CONTACT } from '@/lib/data';
+import { Upload, X, Send, Check, FileText, MessageCircle } from 'lucide-react';
+import type { Lang } from '@/lib/translations';
+import { CONTACT, waUrl } from '@/lib/data';
 
 interface Props {
   lang: Lang;
 }
 
-const content = {
+const translations = {
   en: {
-    badges: ['Free price estimate', 'Fast response within 5 minutes', 'Professional translation services'],
-    emailPlaceholder: 'Your Email',
-    phonePlaceholder: 'Phone Number (optional)',
-    dropText: 'Drop files here or',
+    dragDrop: 'Drag & drop files here or',
     browse: 'browse',
-    submitBtn: 'Get Free Quote',
-    sending: 'Sending...',
-    orCall: 'Or reach us on WhatsApp:',
-    successMsg: 'Files sent successfully!',
-    errorMsg: 'Something went wrong. Please try again.',
+    maxFiles: 'Maximum 5 files (10MB each)',
+    email: 'Your Email',
+    send: 'Get Free Quote',
+    remove: 'Remove',
+    success: 'Files sent successfully!',
+    error: 'Error sending files. Please try again.',
+    invalidEmail: 'Please enter a valid email',
+    tooManyFiles: 'Maximum 5 files allowed',
+    fileTooLarge: 'File size exceeds 10MB',
+    message: 'Phone Number (optional)',
+    uploadBenefit1: 'Free price estimate',
+    uploadBenefit2: 'Fast response within 5 minutes',
+    uploadBenefit3: 'Professional translation services',
+    phoneNumber: 'Chat with us on WhatsApp: ',
   },
   pl: {
-    badges: ['Bezpłatna wycena', 'Szybka odpowiedź w 5 minut', 'Profesjonalne usługi tłumaczeniowe'],
-    emailPlaceholder: 'Twój email',
-    phonePlaceholder: 'Numer telefonu (opcjonalnie)',
-    dropText: 'Upuść pliki tutaj lub',
+    dragDrop: 'Przeciągnij i upuść pliki tutaj lub',
     browse: 'przeglądaj',
-    submitBtn: 'Otrzymaj bezpłatną wycenę',
-    sending: 'Wysyłanie...',
-    orCall: 'Lub napisz na WhatsApp:',
-    successMsg: 'Pliki zostały pomyślnie wysłane!',
-    errorMsg: 'Coś poszło nie tak. Spróbuj ponownie.',
+    maxFiles: 'Maksymalnie 5 plików (po 10MB)',
+    email: 'Twój email',
+    send: 'Otrzymaj bezpłatną wycenę',
+    remove: 'Usuń',
+    success: 'Pliki zostały pomyślnie wysłane!',
+    error: 'Błąd podczas wysyłania. Spróbuj ponownie.',
+    invalidEmail: 'Podaj poprawny adres email',
+    tooManyFiles: 'Dozwolone maksymalnie 5 plików',
+    fileTooLarge: 'Rozmiar pliku przekracza 10MB',
+    message: 'Numer telefonu (opcjonalnie)',
+    uploadBenefit1: 'Bezpłatna wycena',
+    uploadBenefit2: 'Szybka odpowiedź w ciągu 5 minut',
+    uploadBenefit3: 'Profesjonalne usługi tłumaczeniowe',
+    phoneNumber: 'Napisz do nas na WhatsApp: ',
   },
-};
+} as const;
 
-interface Toast {
-  id: number;
-  type: 'success' | 'error';
-  message: string;
-}
-
-let toastCounter = 0;
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_TOTAL_SIZE = 10 * 1024 * 1024;
+const MAX_FILES = 5;
 
 export default function FileUploadForm({ lang }: Props) {
-  const c = content[lang];
+  const t = translations[lang] ?? translations.en;
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+
   const [files, setFiles] = useState<File[]>([]);
-  const [dragging, setDragging] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [toasts, setToasts] = useState<Toast[]>([]);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const t = getT(lang);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const addToast = (type: 'success' | 'error', message: string) => {
-    const id = ++toastCounter;
-    setToasts((prev) => [...prev, { id, type, message }]);
-    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 5000);
-  };
-
-  const addFiles = useCallback((incoming: FileList | null) => {
-    if (!incoming) return;
-    const accepted = Array.from(incoming).filter((f) => {
-      const ext = f.name.split('.').pop()?.toLowerCase() ?? '';
-      return ['pdf', 'doc', 'docx', 'txt', 'jpg', 'jpeg', 'png'].includes(ext) && f.size <= 10 * 1024 * 1024;
-    });
-    setFiles((prev) => [...prev, ...accepted].slice(0, 5));
-  }, []);
-
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragging(false);
-    addFiles(e.dataTransfer.files);
-  };
-
-  const whatsAppLink = () => {
-    const num = CONTACT.whatsapp.replace(/\D/g, '');
-    const msg = encodeURIComponent(lang === 'pl' ? 'Witaj, chciałbym uzyskać więcej informacji.' : 'Hello, I would like to get more information.');
-    return `https://wa.me/${num}?text=${msg}`;
+  const validateFiles = (newFiles: File[]) => {
+    if (files.length + newFiles.length > MAX_FILES) {
+      setNotification({ type: 'error', message: t.tooManyFiles });
+      return false;
+    }
+    for (const file of newFiles) {
+      if (file.size > MAX_FILE_SIZE) {
+        setNotification({ type: 'error', message: `${file.name}: ${t.fileTooLarge}` });
+        return false;
+      }
+    }
+    const totalSize = [...files, ...newFiles].reduce((sum, f) => sum + f.size, 0);
+    if (totalSize > MAX_TOTAL_SIZE) {
+      setNotification({ type: 'error', message: t.fileTooLarge });
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!files.length || !email) return;
-    setLoading(true);
+    setIsSending(true);
+
+    const form = formRef.current!;
+    const emailValue = (form.querySelector('[name="email"]') as HTMLInputElement).value;
+    const phoneValue = (form.querySelector('[name="message"]') as HTMLInputElement).value;
+
     try {
       const formData = new FormData();
-      formData.append('email', email);
-      formData.append('phone', phone || 'Not provided');
+      formData.append('email', emailValue);
+      formData.append('phone', phoneValue || 'Not provided');
       formData.append('lang', lang);
       files.forEach((file) => formData.append('files', file));
 
       const res = await fetch('/api/send-quote', { method: 'POST', body: formData });
-      if (!res.ok) throw new Error('API error');
+      if (!res.ok) throw new Error(await res.text());
 
       router.push(`/${lang}/thank-you-page`);
-    } catch {
-      addToast('error', c.errorMsg);
+    } catch (error) {
+      console.error('Submission error:', error);
+      setNotification({ type: 'error', message: t.error });
     } finally {
-      setLoading(false);
+      setIsSending(false);
     }
   };
 
+  const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); };
+  const handleDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    if (!validateFiles(droppedFiles)) return;
+    setFiles((prev) => [...prev, ...droppedFiles]);
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files ?? []);
+    if (!validateFiles(selectedFiles)) return;
+    setFiles((prev) => [...prev, ...selectedFiles]);
+  };
+
+  const removeFile = (index: number) => {
+    setFiles(files.filter((_, i) => i !== index));
+  };
+
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => setNotification(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
+
   return (
-    <div className="bg-gradient-to-br from-primary-50 to-secondary-50 rounded-xl border border-primary-100 p-6">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-        {c.badges.map((badge) => (
-          <div key={badge} className="flex items-center gap-2 text-sm text-gray-700">
-            <Check className="w-4 h-4 text-primary-500 flex-shrink-0" />
-            {badge}
-          </div>
-        ))}
-      </div>
+    <div className="max-w-2xl mx-auto px-2 sm:px-4 md:px-6">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder={c.emailPlaceholder}
-          className="w-full border-2 border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 rounded-xl px-4 py-3 text-sm outline-none transition-colors bg-white"
-        />
-        <input
-          type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder={c.phonePlaceholder}
-          className="w-full border-2 border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 rounded-xl px-4 py-3 text-sm outline-none transition-colors bg-white"
-        />
+        {/* Upload Benefits */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          {[t.uploadBenefit1, t.uploadBenefit2, t.uploadBenefit3].map((benefit) => (
+            <div key={benefit} className="bg-white rounded-lg p-3 border border-primary-100 text-center shadow-sm">
+              <Check className="w-5 h-5 mx-auto mb-2 text-primary-500" />
+              <p className="text-xs sm:text-sm text-gray-700">{benefit}</p>
+            </div>
+          ))}
+        </div>
 
-        <div
-          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={onDrop}
-          onClick={() => inputRef.current?.click()}
-          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
-            dragging ? 'border-primary-500 bg-primary-50' : 'border-gray-300 hover:border-primary-400 bg-white'
-          }`}
-        >
-          <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-          <p className="text-sm text-gray-600">
-            {c.dropText}{' '}
-            <span className="text-primary-600 font-medium underline">{c.browse}</span>
-          </p>
-          <p className="text-xs text-gray-400 mt-1">PDF, DOC, DOCX, TXT, JPG, PNG • max 5 files, 10MB each</p>
+        {/* Email Input */}
+        <div>
           <input
-            ref={inputRef}
-            type="file"
-            multiple
-            accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
-            className="hidden"
-            onChange={(e) => addFiles(e.target.files)}
+            type="email"
+            name="email"
+            placeholder={t.email}
+            className="w-full p-2.5 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm sm:text-base"
+            required
           />
         </div>
 
-        <AnimatePresence>
-          {files.map((file) => (
-            <motion.div
-              key={file.name}
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: 20, opacity: 0 }}
-              className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-4 py-2.5"
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <FileText className="w-4 h-4 text-primary-500 flex-shrink-0" />
-                <span className="text-sm text-gray-700 truncate">{file.name}</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setFiles((prev) => prev.filter((f) => f.name !== file.name))}
-                className="text-gray-400 hover:text-red-500 transition-colors ml-2 flex-shrink-0"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+        {/* Phone Input */}
+        <div>
+          <input
+            type="tel"
+            name="message"
+            placeholder={t.message}
+            className="w-full p-2.5 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm sm:text-base"
+          />
+        </div>
 
-        <button
-          type="submit"
-          disabled={!files.length || !email || loading}
-          className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-sm transition-all ${
-            files.length && email && !loading
-              ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white hover:opacity-90'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+        {/* File Drop Zone */}
+        <div
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={`border-2 border-dashed rounded-lg p-4 sm:p-6 md:p-8 text-center transition-colors ${
+            isDragging ? 'border-primary-500 bg-primary-50' : 'border-gray-300'
           }`}
         >
-          {loading ? (
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileInput}
+            multiple
+            className="hidden"
+            accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+          />
+          <Upload className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 mx-auto mb-2 sm:mb-3 md:mb-4 text-primary-500" />
+          <p className="mb-1 sm:mb-2 text-sm sm:text-base text-gray-700">
+            {t.dragDrop}{' '}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-primary-600 hover:text-primary-800 font-medium underline"
+            >
+              {t.browse}
+            </button>
+          </p>
+          <p className="text-xs sm:text-sm text-gray-500">{t.maxFiles}</p>
+        </div>
+
+        {/* File List */}
+        {files.length > 0 && (
+          <div className="space-y-1.5 sm:space-y-2">
+            {files.map((file, index) => (
+              <div
+                key={`${file.name}-${index}`}
+                className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-100"
+              >
+                <span className="flex items-center">
+                  <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-primary-500 mr-2" />
+                  <span className="truncate max-w-[180px] sm:max-w-xs text-xs sm:text-sm">{file.name}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => removeFile(index)}
+                  className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50"
+                >
+                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={files.length === 0 || isSending}
+          className={`w-full py-2.5 sm:py-3.5 px-4 sm:px-6 rounded-lg text-white font-medium flex items-center justify-center space-x-2 text-sm sm:text-base transition-all duration-300 ${
+            files.length === 0 || isSending
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 shadow-lg hover:shadow-primary-200/50 transform hover:scale-[1.01]'
+          }`}
+        >
+          {isSending ? (
             <>
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              {c.sending}
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+              <span>...</span>
             </>
           ) : (
-            c.submitBtn
+            <>
+              <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>{t.send}</span>
+            </>
           )}
         </button>
 
-        <p className="text-center text-sm text-gray-500">
-          {c.orCall}{' '}
-          <a href={whatsAppLink()} target="_blank" rel="noopener noreferrer" className="text-primary-600 font-medium">
-            WhatsApp
+        {/* WhatsApp link */}
+        <div className="text-center mt-4">
+          <a
+            id="wa-btn-upload"
+            href={waUrl(lang)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-medium text-green-600 hover:text-green-700 transition-colors"
+          >
+            <MessageCircle className="w-4 h-4" />
+            {t.phoneNumber}{CONTACT.phone1.display}
           </a>
-        </p>
-      </form>
+        </div>
 
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
-        <AnimatePresence>
-          {toasts.map((toast) => (
-            <motion.div
-              key={toast.id}
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 20, opacity: 0 }}
-              className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-white text-sm font-medium ${
-                toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-              }`}
-            >
-              {toast.type === 'success' ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
-              {toast.message}
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+        {/* Notification */}
+        {notification && (
+          <div
+            className={`fixed bottom-4 right-4 p-3 rounded-lg shadow-lg flex items-center space-x-2 max-w-xs z-50 ${
+              notification.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            }`}
+            style={{ animation: 'nt-fade-up 0.2s ease-out both' }}
+          >
+            {notification.type === 'success' ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
+            <span>{notification.message}</span>
+          </div>
+        )}
+      </form>
     </div>
   );
 }
